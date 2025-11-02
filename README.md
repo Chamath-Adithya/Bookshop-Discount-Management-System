@@ -232,16 +232,3 @@ Total = Rs.541.50
 ```
 
 ---
-
-## 📚 Learning Outcomes
-
-By developing BDMS, students will:
-
-* Apply OOP principles in a real-world business problem.
-* Gain experience building modular software using JavaFX and Maven.
-* Understand file handling and exception management.
-* Demonstrate inheritance, polymorphism, abstraction, and encapsulation clearly.
-* Build maintainable and reusable object-oriented code.
-* Showcase software engineering practices suitable for academic assessment.
-
----
