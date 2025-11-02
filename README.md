@@ -8,7 +8,22 @@ The **Bookshop Discount Management System (BDMS)** is a JavaFX-based desktop app
 
 ### **Problem Context**
 
-Bookshops commonly offer discounts when customers purchase products in bulk. For instance, a pen might cost Rs.100 each but Rs.95 each when buying five or more. Managing such discount structures manually often leads to:
+Bookshops commonly offer discounts when customers purchase products in bulk. For example:
+
+**Pen:**
+
+* Quantity 1 → Rs.100 each
+* Quantity 5 → Rs.95 each
+* Quantity 10 → Rs.80 each
+
+**Pencil:**
+
+* Quantity 1 → Rs.40 each
+* Quantity 3 → Rs.35 each
+* Quantity 10 → Rs.30 each
+* Quantity 100 → Rs.25 each
+
+Managing such multi-tiered discount structures manually often leads to:
 
 * **Errors** during manual calculations.
 * **Inconsistent discounts** among customers.
@@ -218,3 +233,15 @@ Total = Rs.541.50
 
 ---
 
+## 📚 Learning Outcomes
+
+By developing BDMS, students will:
+
+* Apply OOP principles in a real-world business problem.
+* Gain experience building modular software using JavaFX and Maven.
+* Understand file handling and exception management.
+* Demonstrate inheritance, polymorphism, abstraction, and encapsulation clearly.
+* Build maintainable and reusable object-oriented code.
+* Showcase software engineering practices suitable for academic assessment.
+
+---
