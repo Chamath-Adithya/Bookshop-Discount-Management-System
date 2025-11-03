@@ -127,10 +127,11 @@ BookshopDiscountSystem/
 ├── pom.xml                     # Maven build configuration
 ├── .gitignore
 ├── data/                       # File-based data storage
-│   ├── products.csv
-│   ├── discounts.csv
+│   ├── products.csv              # Contains all product and discount data
 │   ├── users.csv
 │   └── customers.csv
+├── DATABASE.md                 # Describes the data storage architecture
+├── PLAN.md                     # Outlines the development tasks for the team
 ├── src/
 │   ├── main/
 │   │   ├── java/
