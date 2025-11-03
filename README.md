@@ -130,8 +130,11 @@ BookshopDiscountSystem/
 │   ├── products.csv              # Contains all product and discount data
 │   ├── users.csv
 │   └── customers.csv
-├── DATABASE.md                 # Describes the data storage architecture
-├── PLAN.md                     # Outlines the development tasks for the team
+├── docs/
+│   ├── AI_AGENT_GUIDE.md
+│   ├── DATABASE.md
+│   ├── LEARNING_GUIDE.md
+│   └── PLAN.md
 ├── src/
 │   ├── main/
 │   │   ├── java/
