@@ -4,6 +4,28 @@ This document outlines the development plan and task distribution for the projec
 
 ---
 
+## 📋 Task Sequence Summary
+
+This table provides a high-level overview of the development tasks in their logical sequence.
+
+| Sequence | Task | File(s) | Assigned Member |
+| :--- | :--- | :--- | :--- |
+| 1 | Setup Maven Project | `pom.xml` | **A** |
+| 2 | Define Core Abstract Models | `User.java`, `Customer.java` | **A** & **B** |
+| 3 | Define Core Data Models | `Product.java`, `Discount.java` | **A** |
+| 4 | Implement Customer Hierarchy | `RegularCustomer.java`, `VIPCustomer.java` | **B** |
+| 5 | Implement User Roles | `Manager.java`, `Worker.java` | **C** |
+| 6 | Create Custom Exceptions | `InvalidProductException.java`, `InvalidQuantityException.java` | **E** |
+| 7 | Implement CSV File Utility | `FileHandler.java` | **A** |
+| 8 | Implement Data Services | `ProductService.java`, `CustomerService.java`, `DiscountService.java` | **B** & **C** |
+| 9 | Implement Input Validator | `InputValidator.java` | **E** |
+| 10 | Configure Java Module | `module-info.java` | **D** |
+| 11 | Implement Core Billing Logic | `BillingService.java` | **D** |
+| 12 | Develop UI & Integrate Services | `App.java` | **D** |
+| 13 | Write Unit Tests | `BillingServiceTest.java` | **E** |
+
+---
+
 ##  workflow Suggestion
 
 1.  **Foundation (Team A)**: Member A should begin first by creating the `pom.xml` and the core abstract classes and data models. Once the `pom.xml` is pushed, all other members can set up their environment.
