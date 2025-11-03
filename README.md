@@ -124,48 +124,32 @@ public abstract class User {
 ```
 BookshopDiscountSystem/
 ├── README.md
-├── pom.xml                     # Maven build configuration
+├── pom.xml
 ├── .gitignore
-├── data/                       # File-based data storage
-│   ├── products.csv              # Contains all product and discount data
-│   ├── users.csv
-│   └── customers.csv
-├── docs/
+├── docs/                     # Project documentation
 │   ├── AI_AGENT_GUIDE.md
 │   ├── DATABASE.md
 │   ├── LEARNING_GUIDE.md
 │   └── PLAN.md
+├── data/                     # CSV data files
+│   ├── products.csv
+│   ├── users.csv
+│   └── customers.csv
 ├── src/
 │   ├── main/
-│   │   ├── java/
-│   │   │   ├── module-info.java
-│   │   │   └── bookshop/
-│   │   │       ├── App.java                    # Main JavaFX application
-│   │   │       ├── model/                      # OOP models
-│   │   │       │   ├── Product.java
-│   │   │       │   ├── Discount.java
-│   │   │       │   ├── Customer.java
-│   │   │       │   ├── RegularCustomer.java
-│   │   │       │   ├── VIPCustomer.java
-│   │   │       │   ├── User.java
-│   │   │       │   ├── Manager.java
-│   │   │       │   └── Worker.java
-│   │   │       ├── service/                    # Core logic
-│   │   │       │   ├── ProductService.java
-│   │   │       │   ├── DiscountService.java
-│   │   │       │   ├── BillingService.java
-│   │   │       │   └── CustomerService.java
-│   │   │       ├── util/                       # Utility classes
-│   │   │       │   ├── FileHandler.java
-│   │   │       │   └── InputValidator.java
-│   │   │       └── exceptions/                 # Custom exceptions
-│   │   │           ├── InvalidProductException.java
-│   │   │           └── InvalidQuantityException.java
+│   │   └── java/
+│   │       ├── module-info.java
+│   │       └── bookshop/
+│   │           ├── App.java
+│   │           ├── model/
+│   │           ├── service/
+│   │           ├── util/
+│   │           └── exceptions/
 │   └── test/
 │       └── java/
 │           └── bookshop/
-│               └── BillingServiceTest.java     # Unit tests
-└── target/                                     # Maven output (auto-generated)
+│               └── BillingServiceTest.java
+└── target/                   # Maven build output (auto-generated)
 ```
 
 ---
