@@ -126,12 +126,12 @@ BookshopDiscountSystem/
 ├── README.md
 ├── pom.xml
 ├── .gitignore
-├── docs/                     # Project documentation
+├── docs/
 │   ├── AI_AGENT_GUIDE.md
 │   ├── DATABASE.md
 │   ├── LEARNING_GUIDE.md
 │   └── PLAN.md
-├── data/                     # CSV data files
+├── data/
 │   ├── products.csv
 │   ├── users.csv
 │   └── customers.csv
@@ -141,10 +141,26 @@ BookshopDiscountSystem/
 │   │       ├── module-info.java
 │   │       └── bookshop/
 │   │           ├── App.java
+│   │           ├── exceptions/
+│   │           │   ├── InvalidProductException.java
+│   │           │   └── InvalidQuantityException.java
 │   │           ├── model/
+│   │           │   ├── Customer.java
+│   │           │   ├── Discount.java
+│   │           │   ├── Manager.java
+│   │           │   ├── Product.java
+│   │           │   ├── RegularCustomer.java
+│   │           │   ├── User.java
+│   │           │   ├── VIPCustomer.java
+│   │           │   └── Worker.java
 │   │           ├── service/
-│   │           ├── util/
-│   │           └── exceptions/
+│   │           │   ├── BillingService.java
+│   │           │   ├── CustomerService.java
+│   │           │   ├── DiscountService.java
+│   │           │   └── ProductService.java
+│   │           └── util/
+│   │               ├── FileHandler.java
+│   │               └── InputValidator.java
 │   └── test/
 │       └── java/
 │           └── bookshop/
