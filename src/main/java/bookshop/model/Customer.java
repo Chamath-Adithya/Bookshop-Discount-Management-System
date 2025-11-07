@@ -5,12 +5,14 @@ public abstract class Customer {
     protected String customerId;
     protected String name;
     protected String type;
+    protected double baseDiscountRate;
 
     // Constructor
-    public Customer(String customerId, String name, String type) {
+    public Customer(String customerId, String name, String type,double baseDiscountRate) {
         this.customerId = customerId;
         this.name = name;
         this.type = type;
+        this.baseDiscountRate = baseDiscountRate;
     }
 
     // Getters
@@ -26,6 +28,10 @@ public abstract class Customer {
         return type;
     }
 
+    public double getBaseDiscountRate() {
+        return baseDiscountRate;
+    }
+
     // Setters
     public void setCustomerId(String customerId) {
         this.customerId = customerId;
@@ -39,10 +45,11 @@ public abstract class Customer {
         this.type = type;
     }
 
+
     /**
-     * Calculate the final price after applying any customer-specific discounts
-     * @param totalAmount The total amount before customer-specific discounts
-     * @return The final price after applying customer-specific discounts
+     * Calculate the final price after applying any customer specific discounts
+     * @param totalAmount The total amount before customer specific discounts
+     * @return The final price after applying customer specific discounts
      */
     public abstract double calculateFinalPrice(double totalAmount);
 }
