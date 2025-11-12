@@ -1,5 +1,17 @@
 package bookshop.service;
 
-// Team Member C: Implement service to manage discount rule data.
+import java.io.IOException;
+
+import bookshop.model.Product;
+
+// Team Member C: Implement the DiscountService for updating product discounts.
 public class DiscountService {
+
+    /**
+     * Adds a new discount rule to a product and overwrites the CSV file.
+     * This is a complex read-modify-overwrite operation.
+     */
+    public void addDiscount(Product product, int quantity, double price) throws IOException {
+        // TODO: Implement this method based on PLAN.md
+    }
 }
