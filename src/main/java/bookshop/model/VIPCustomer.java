@@ -7,7 +7,7 @@ public class VIPCustomer extends Customer {
 
     // Constructor
     public VIPCustomer(String customerId, String name) {
-        super(customerId, name, TYPE);
+        super(customerId, name, TYPE, VIP_DISCOUNT_RATE);
     }
 
     /**
