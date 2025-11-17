@@ -48,14 +48,10 @@ public class BillingServiceTest {
         vipCustomer = new VIPCustomer("c02", "VIP Jane");
 
         // 3. Define mock behavior: what should the mocked services return when called?
-        try {
-            // When productService.findProductByName("Test Book") is called, return our testProduct
-            when(productService.findProductByName("Test Book")).thenReturn(testProduct);
-            // When a non-existent product is requested, throw an exception
-            when(productService.findProductByName("Unknown Book")).thenThrow(new InvalidProductException("Product not found: Unknown Book"));
-        } catch (InvalidProductException e) {
-            // This is just for setup, so we can ignore the checked exception here.
-        }
+        // When productService.findProductByName("Test Book") is called, return our testProduct
+        when(productService.findProductByName("Test Book")).thenReturn(testProduct);
+        // When a non-existent product is requested, throw an exception
+        when(productService.findProductByName("Unknown Book")).thenThrow(new InvalidProductException("Product not found: Unknown Book"));
 
         // When customerService is asked for customer "c01", return the regular customer
         when(customerService.findCustomerById("c01")).thenReturn(regularCustomer);
