@@ -22,21 +22,20 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class BillingServiceTest {
 
-    @Mock
-    ProductService productService;
+    @Mock(lenient = true)
+    public ProductService productService;
 
-    @Mock
-    CustomerService customerService;
+    @Mock(lenient = true)
+    public CustomerService customerService;
 
-    @InjectMocks
-    BillingService billingService;
+    public BillingService billingService;
 
     private Product testProduct;
     private Customer regularCustomer;
     private Customer vipCustomer;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws InvalidProductException {
         // 1. Create a reusable test product with discount rules
         Map<Integer, Double> discountRules = new HashMap<>();
         discountRules.put(5, 95.0);  // If quantity >= 5, price is 95.0
@@ -57,6 +56,9 @@ public class BillingServiceTest {
         when(customerService.findCustomerById("c01")).thenReturn(regularCustomer);
         // When customerService is asked for customer "c02", return the VIP customer
         when(customerService.findCustomerById("c02")).thenReturn(vipCustomer);
+
+        // Instantiate BillingService with mocks
+        billingService = new BillingService(productService, customerService);
     }
 
     @Test

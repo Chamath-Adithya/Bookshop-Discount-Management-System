@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import bookshop.exceptions.InvalidProductException;
 import bookshop.model.Product;
 import bookshop.util.FileHandler;
 
@@ -44,13 +45,13 @@ public class ProductService {
         return new ArrayList<>(products);
     }
 
-    public Product findProductByName(String name) {
+    public Product findProductByName(String name) throws InvalidProductException {
         for (Product product : products) {
             if (product.getName().equalsIgnoreCase(name)) {
                 return product;
             }
         }
-        return null;
+        throw new InvalidProductException("Product not found: " + name);
     }
 
     public Product findProductById(String id) {
