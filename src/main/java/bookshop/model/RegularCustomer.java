@@ -6,7 +6,7 @@ public class RegularCustomer extends Customer {
 
     // Constructor
     public RegularCustomer(String customerId, String name) {
-        super(customerId, name, TYPE);
+        super(customerId, name, TYPE, 0.0);
     }
 
     @Override

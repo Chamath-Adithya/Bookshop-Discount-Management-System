@@ -23,13 +23,13 @@ import static org.mockito.Mockito.when;
 public class BillingServiceTest {
 
     @Mock
-    private ProductService productService;
+    ProductService productService;
 
     @Mock
-    private CustomerService customerService;
+    CustomerService customerService;
 
     @InjectMocks
-    private BillingService billingService;
+    BillingService billingService;
 
     private Product testProduct;
     private Customer regularCustomer;
@@ -65,9 +65,8 @@ public class BillingServiceTest {
 
     @Test
     void testCalculateTotal_RegularCustomer_NoDiscount() throws InvalidProductException {
-        // TODO: Implement test logic
-        // Example: double total = billingService.calculateTotal("Test Book", 4, "c01");
-        // assertEquals(400.0, total); // 4 * 100.0
+        double total = billingService.calculateTotal("Test Book", 4, "c01");
+        assertEquals(400.0, total); // 4 * 100.0 (no discount for qty 4)
     }
 
     @Test
