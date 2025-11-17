@@ -1,11 +1,25 @@
 package bookshop.util;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 // Team Member A: Implement utility methods for file I/O and discount string parsing.
 public final class FileHandler {
     private FileHandler() {}
+
+    /**
+     * Reads all lines from a CSV file.
+     * @param filePath The path to the CSV file.
+     * @return A list of strings, each representing a line in the file.
+     * @throws IOException If an I/O error occurs.
+     */
+    public static List<String> readCsv(String filePath) throws IOException {
+        return Files.readAllLines(Paths.get(filePath));
+    }
 
     public static Map<Integer, Double> parseDiscountString(String discounts) {
         Map<Integer, Double> discountMap = new HashMap<>();
