@@ -69,24 +69,24 @@ public class BillingServiceTest {
 
     @Test
     void testCalculateTotal_RegularCustomer_WithDiscount() throws InvalidProductException {
-        // TODO: Implement test logic
-        // Example: double total = billingService.calculateTotal("Test Book", 5, "c01");
-        // assertEquals(475.0, total); // 5 * 95.0
+        double total = billingService.calculateTotal("Test Book", 5, "c01");
+        assertEquals(475.0, total); // 5 * 95.0 (discount applies)
     }
 
     @Test
     void testCalculateTotal_VIPCustomer_NoDiscount() throws InvalidProductException {
-        // TODO: Implement test logic
+        double total = billingService.calculateTotal("Test Book", 4, "c02");
+        assertEquals(380.0, total); // 4 * 100.0 * 0.95 (VIP discount)
     }
 
     @Test
     void testCalculateTotal_VIPCustomer_WithDiscount() throws InvalidProductException {
-        // TODO: Implement test logic
+        double total = billingService.calculateTotal("Test Book", 5, "c02");
+        assertEquals(451.25, total); // 5 * 95.0 * 0.95 (both discounts)
     }
 
     @Test
     void testCalculateTotal_ProductNotFound() {
-        // TODO: Implement test logic
-        // Example: assertThrows(InvalidProductException.class, () -> billingService.calculateTotal("Unknown Book", 1, "c01"));
+        assertThrows(InvalidProductException.class, () -> billingService.calculateTotal("Unknown Book", 1, "c01"));
     }
 }

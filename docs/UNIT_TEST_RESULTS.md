@@ -9,18 +9,18 @@
 
 ### Current Test Status
 - **Total Tests**: 5 test methods defined.
-- **Passing Tests**: 1 (fully implemented).
-- **Incomplete Tests**: 4 (stubs, but no runtime errors).
+- **Passing Tests**: 5 (all fully implemented).
+- **Incomplete Tests**: 0.
 - **Build Status**: ✅ All tests pass (`mvn test` succeeds).
 
 ### Detailed Results
 | Test Method | Status | Notes |
 |-------------|--------|-------|
 | `testCalculateTotal_RegularCustomer_NoDiscount` | ✅ Pass | Validates 4 units at Rs.100 = Rs.400 for regular customer |
-| `testCalculateTotal_RegularCustomer_WithDiscount` | ⚠️ Incomplete | Stub code present, needs implementation |
-| `testCalculateTotal_VIPCustomer_NoDiscount` | ⚠️ Incomplete | Stub code present, needs implementation |
-| `testCalculateTotal_VIPCustomer_WithDiscount` | ⚠️ Incomplete | Stub code present, needs implementation |
-| `testCalculateTotal_ProductNotFound` | ⚠️ Incomplete | Stub code present, needs implementation |
+| `testCalculateTotal_RegularCustomer_WithDiscount` | ✅ Pass | Validates 5 units at Rs.95 = Rs.475 for regular customer |
+| `testCalculateTotal_VIPCustomer_NoDiscount` | ✅ Pass | Validates 4 units at Rs.100 * 0.95 = Rs.380 for VIP customer |
+| `testCalculateTotal_VIPCustomer_WithDiscount` | ✅ Pass | Validates 5 units at Rs.95 * 0.95 = Rs.451.25 for VIP customer |
+| `testCalculateTotal_ProductNotFound` | ✅ Pass | Validates exception thrown for unknown product |
 
 ### Fixes Applied
 - **Module Access**: Added JVM args `--add-opens java.base/java.lang=ALL-UNNAMED` to `maven-surefire-plugin`.
