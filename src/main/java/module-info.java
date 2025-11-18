@@ -5,8 +5,11 @@ module bookshop {
     // Allow JavaFX to access your model classes if they are used in the UI
     opens bookshop.model to javafx.base;
 
-    // Open the main package to JavaFX and testing
-    opens bookshop;
+    // This opens the main package (for the App class)
+    opens bookshop to javafx.fxml;
+
+    // Add this line to allow FXML to access your LoginController
+    opens bookshop.controllers to javafx.fxml;
 
     // Export the main package
     exports bookshop;
