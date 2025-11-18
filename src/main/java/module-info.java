@@ -10,6 +10,8 @@ module bookshop {
 
     // Add this line to allow FXML to access your LoginController
     opens bookshop.controllers to javafx.fxml;
+    opens bookshop.controllers.User to javafx.fxml;
+    opens bookshop.controllers.Admin to javafx.fxml;
 
     // Export the main package
     exports bookshop;

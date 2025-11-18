@@ -1,0 +1,22 @@
+.menu_container {
+    -fx-background-color: #132A13;
+    -fx-alignment: center;
+}
+
+.item_container {
+    -fx-background-color: #EEEEEE;
+}
+
+.item {
+    -fx-background-color: #EEEEEE;
+}
+.item Text{
+    -fx-text-fill: #132910;
+}
+
+
+
+.menu_container Button:hover {
+    -fx-cursor: hand;
+}
+

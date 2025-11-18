@@ -1,14 +1,136 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
 <?import java.lang.*?>
 <?import java.util.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="bookshop.controllers.User.UserController"
-            prefHeight="400.0" prefWidth="600.0">
-
+<AnchorPane prefHeight="600.0" prefWidth="900.0" stylesheets="@../../Styles/User.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="bookshop.controllers.User.UserController">
+   <children>
+       <VBox layoutX="14.0" layoutY="14.0" prefHeight="570.0" prefWidth="167.0" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="14.0">
+          <children>
+              <AnchorPane prefHeight="674.0" prefWidth="167.0" styleClass="menu_container">
+                 <children>
+                     <Text fill="WHITE" layoutX="34.0" layoutY="78.0" strokeType="OUTSIDE" strokeWidth="0.0" text="08:00">
+                         <font>
+                             <Font size="42.0" />
+                         </font>
+                     </Text>
+                     <Text fill="WHITE" layoutX="42.0" layoutY="94.0" strokeType="OUTSIDE" strokeWidth="0.0" text="18 Nov 2025" />
+                     <Text fill="WHITE" layoutX="35.0" layoutY="159.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Good Morning" />
+                     <Text fill="WHITE" layoutX="60.0" layoutY="188.0" strokeType="OUTSIDE" strokeWidth="0.0" text="[ User ]" />
+                     <Button layoutX="49.0" layoutY="502.0" mnemonicParsing="false" styleClass="login_form_container" text="Logout" />
+                 </children>
+              </AnchorPane>
+          </children>
+       </VBox>
+       <VBox layoutX="194.0" layoutY="6.0" prefHeight="674.0" prefWidth="492.0" AnchorPane.bottomAnchor="14.0" AnchorPane.topAnchor="14.0">
+          <children>
+              <AnchorPane prefHeight="679.0" prefWidth="492.0" styleClass="menu_container" stylesheets="@../../Styles/User.css">
+                 <children>
+                     <TextField layoutX="220.0" layoutY="10.0" />
+                     <Button layoutX="413.0" layoutY="10.0" mnemonicParsing="false" text="Search" />
+                     <VBox layoutX="14.0" layoutY="49.0" prefHeight="510.0" prefWidth="466.0" styleClass="item_container">
+                        <children>
+                            <ScrollPane prefHeight="515.0" prefWidth="466.0">
+                               <content>
+                                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="506.0" prefWidth="464.0">
+                                      <children>
+                                          <GridPane layoutY="-3.0" prefHeight="510.0" prefWidth="466.0">
+                                              <columnConstraints>
+                                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                              </columnConstraints>
+                                              <rowConstraints>
+                                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                              </rowConstraints>
+                                             <children>
+                                                 <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" style="-fx-background-radius: 30;" styleClass="item">
+                                                    <children>
+                                                        <ImageView fitHeight="77.0" fitWidth="77.0" pickOnBounds="true" preserveRatio="true">
+                                                           <image>
+                                                               <Image url="@../../Images/pencil.png" />
+                                                           </image>
+                                                        </ImageView>
+                                                        <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: black;" styleClass="item" text="Pencil" />
+                                                        <Button mnemonicParsing="false" text="Add" />
+                                                    </children>
+                                                 </VBox>
+                                                 <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" style="-fx-background-radius: 30;" styleClass="item" GridPane.columnIndex="1">
+                                                    <children>
+                                                        <ImageView fitHeight="77.0" fitWidth="77.0" pickOnBounds="true" preserveRatio="true">
+                                                           <image>
+                                                               <Image url="@../../Images/pen.png" />
+                                                           </image>
+                                                        </ImageView>
+                                                        <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: black;" styleClass="item" text="Pen" />
+                                                        <Button mnemonicParsing="false" text="Add" />
+                                                    </children>
+                                                 </VBox>
+                                             </children>
+                                          </GridPane>
+                                      </children>
+                                   </AnchorPane>
+                               </content>
+                            </ScrollPane>
+                        </children>
+                     </VBox>
+                  <ToggleButton layoutX="44.0" layoutY="10.0" mnemonicParsing="false" prefWidth="100.0" text="Item" />
+                 </children>
+              </AnchorPane>
+          </children>
+       </VBox>
+      <VBox layoutX="700.0" layoutY="14.0" prefHeight="572.0" prefWidth="187.0">
+         <children>
+            <AnchorPane prefHeight="572.0" prefWidth="187.0" styleClass="menu_container" stylesheets="@../../Styles/User.css">
+               <children>
+                  <Text fill="WHITE" layoutX="14.0" layoutY="46.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Cart">
+                     <font>
+                        <Font size="30.0" />
+                     </font>
+                  </Text>
+                  <VBox layoutX="10.0" layoutY="65.0" prefHeight="381.0" prefWidth="167.0" styleClass="item_container">
+                     <children>
+                        <VBox prefHeight="86.0" prefWidth="167.0">
+                           <children>
+                              <HBox alignment="CENTER" prefHeight="48.0" prefWidth="167.0">
+                                 <children>
+                                    <Text fill="#0a0a0a" strokeType="OUTSIDE" strokeWidth="0.0" text=" Pen  000.00" wrappingWidth="123.8046875">
+                                       <font>
+                                          <Font size="23.0" />
+                                       </font>
+                                    </Text>
+                                 </children></HBox>
+                              <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                                 <children>
+                                    <Button mnemonicParsing="false" prefWidth="40.0" text="+" />
+                                    <TextField alignment="CENTER" prefHeight="31.0" prefWidth="70.0" text="0" />
+                                    <Button mnemonicParsing="false" prefHeight="31.0" prefWidth="40.0" text="-" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                     </children></VBox>
+                  <Button layoutX="14.0" layoutY="520.0" mnemonicParsing="false" prefWidth="70.0" style="-fx-background-color: green;" text="Clear" />
+                  <Button layoutX="103.0" layoutY="520.0" mnemonicParsing="false" prefWidth="70.0" style="-fx-background-color: Green;" text="Pay" />
+                  <VBox alignment="CENTER" layoutX="10.0" layoutY="455.0" prefHeight="45.0" prefWidth="167.0" styleClass="item_container">
+                     <children>
+                        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="22.0" prefWidth="113.0" text="Total amount">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Label>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: green;" styleClass="item" text="Rs. 0000.00" />
+                     </children>
+                  </VBox>
+               </children>
+            </AnchorPane>
+         </children>
+      </VBox>
+   </children>
 </AnchorPane>
