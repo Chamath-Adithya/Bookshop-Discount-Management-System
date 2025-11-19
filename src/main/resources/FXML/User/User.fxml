@@ -18,23 +18,23 @@
                     <children>
                         <VBox alignment="CENTER" spacing="5.0">
                             <children>
-                                <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="08:00">
+                                <Text fx:id="timeText" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="08:00">
                                     <font>
                                         <Font name="System Bold" size="48.0" />
                                     </font>
                                 </Text>
-                                <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="18 Nov 2025">
+                                <Text fx:id="dateText" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="18 Nov 2025">
                                     <font>
                                         <Font size="18.0" />
                                     </font>
                                 </Text>
                                 <Separator opacity="0.0" orientation="VERTICAL" prefHeight="30.0" />
-                                <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Good Morning">
+                                <Text fx:id="greetingText" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Good Morning">
                                     <font>
                                         <Font size="18.0" />
                                     </font>
                                 </Text>
-                                <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="[ User ]">
+                                <Text fx:id="userText" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="[ User ]">
                                     <font>
                                         <Font name="System Bold" size="20.0" />
                                     </font>
@@ -47,7 +47,7 @@
 
                         <Region VBox.vgrow="ALWAYS" />
 
-                        <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="100.0" styleClass="login_form_container" text="Logout">
+                        <Button fx:id="logoutButton" mnemonicParsing="false" onAction="#handleLogout" prefHeight="40.0" prefWidth="100.0" styleClass="login_form_container" text="Logout">
                             <VBox.margin>
                                 <Insets bottom="30.0" />
                             </VBox.margin>
@@ -65,9 +65,9 @@
                             <children>
                                 <HBox alignment="CENTER_LEFT" spacing="10.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
                                     <children>
-                                        <ToggleButton mnemonicParsing="false" prefWidth="80.0" text="Item" />
-                                        <TextField HBox.hgrow="ALWAYS" promptText="Search items..." />
-                                        <Button mnemonicParsing="false" prefWidth="80.0" text="Search" />
+                                        <ToggleButton fx:id="itemToggle" mnemonicParsing="false" prefWidth="80.0" text="Item" />
+                                        <TextField fx:id="searchField" onAction="#handleSearch" HBox.hgrow="ALWAYS" promptText="Search items..." />
+                                        <Button fx:id="searchButton" mnemonicParsing="false" onAction="#handleSearch" prefWidth="80.0" text="Search" />
                                     </children>
                                 </HBox>
                             </children>
@@ -85,7 +85,7 @@
                                     </rowConstraints>
                                     <children>
 
-                                        <VBox alignment="CENTER" spacing="10.0" style="-fx-background-color: #f4f4f4; -fx-background-radius: 20; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 5, 0, 0, 2);" styleClass="item">
+                                        <VBox alignment="CENTER" onMouseClicked="#handleAddToCart" spacing="10.0" style="-fx-background-color: #f4f4f4; -fx-background-radius: 20; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 5, 0, 0, 2);" styleClass="item">
                                             <children>
                                                 <ImageView fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -97,14 +97,14 @@
                                                         <Font size="18.0" />
                                                     </font>
                                                 </Text>
-                                                <Button mnemonicParsing="false" text="Add to Cart" />
+                                                <Button mnemonicParsing="false" onMouseClicked="#handleAddToCart" text="Add to Cart" />
                                             </children>
                                             <padding>
                                                 <Insets bottom="15.0" top="15.0" />
                                             </padding>
                                         </VBox>
 
-                                        <VBox alignment="CENTER" spacing="10.0" style="-fx-background-color: #f4f4f4; -fx-background-radius: 20; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 5, 0, 0, 2);" styleClass="item" GridPane.columnIndex="1">
+                                        <VBox alignment="CENTER" onMouseClicked="#handleAddToCart" spacing="10.0" style="-fx-background-color: #f4f4f4; -fx-background-radius: 20; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 5, 0, 0, 2);" styleClass="item" GridPane.columnIndex="1">
                                             <children>
                                                 <ImageView fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -116,7 +116,7 @@
                                                         <Font size="18.0" />
                                                     </font>
                                                 </Text>
-                                                <Button mnemonicParsing="false" text="Add to Cart" />
+                                                <Button mnemonicParsing="false" onMouseClicked="#handleAddToCart" text="Add to Cart" />
                                             </children>
                                             <padding>
                                                 <Insets bottom="15.0" top="15.0" />
@@ -208,8 +208,8 @@
 
                         <HBox alignment="CENTER" spacing="10.0">
                             <children>
-                                <Button mnemonicParsing="false" prefWidth="80.0" style="-fx-background-color: #cc0000; -fx-text-fill: white;" text="Clear" />
-                                <Button mnemonicParsing="false" prefWidth="80.0" style="-fx-background-color: green; -fx-text-fill: white;" text="Pay" />
+                                <Button fx:id="clearCartButton" mnemonicParsing="false" onAction="#handleClearCart" prefWidth="80.0" style="-fx-background-color: #cc0000; -fx-text-fill: white;" text="Clear" />
+                                <Button fx:id="payButton" mnemonicParsing="false" onAction="#handlePay" prefWidth="80.0" style="-fx-background-color: green; -fx-text-fill: white;" text="Pay" />
                             </children>
                             <VBox.margin>
                                 <Insets bottom="10.0" />
