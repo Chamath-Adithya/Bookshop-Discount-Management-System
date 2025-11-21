@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane prefHeight="800.0" prefWidth="1200.0" stylesheets="@../../Styles/Cashier.css" 
+            xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1" 
+            fx:controller="bookshop.controllers.User.CashierController">
+
+    <!-- Top Header Bar -->
+    <top>
+        <VBox style="-fx-background-color: #0F3D20; -fx-padding: 15;">
+            <HBox alignment="CENTER_LEFT" spacing="20.0">
+                <Text text="CASHIER - POINT OF SALE" fill="WHITE" style="-fx-font-size: 24; -fx-font-weight: bold;" />
+                <Region HBox.hgrow="ALWAYS" />
+                <Text fx:id="dateTimeText" fill="WHITE" style="-fx-font-size: 14;" />
+                <Button fx:id="logoutBtn" text="Logout" onAction="#handleLogout" 
+                        style="-fx-padding: 8; -fx-background-color: #cc0000; -fx-text-fill: white;" />
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- Left Panel - Product Search & Grid -->
+    <left>
+        <VBox spacing="10.0" style="-fx-padding: 15; -fx-border-color: #ddd; -fx-border-width: 0 1 0 0;">
+            <Text text="Products" style="-fx-font-size: 18; -fx-font-weight: bold;" />
+            
+            <!-- Search Bar -->
+            <HBox spacing="5.0">
+                <TextField fx:id="searchField" promptText="Search product..." HBox.hgrow="ALWAYS"
+                           onAction="#handleSearch" />
+                <Button fx:id="searchBtn" text="Search" onAction="#handleSearch" prefWidth="80.0" />
+            </HBox>
+
+            <!-- Refresh Button -->
+            <Button fx:id="refreshBtn" text="Refresh Products" onAction="#handleRefresh" 
+                    prefWidth="200.0" style="-fx-padding: 8; -fx-background-color: #0F3D20; -fx-text-fill: white;" />
+
+            <!-- Products Grid View -->
+            <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent;">
+                <GridPane fx:id="productsGrid" hgap="10.0" vgap="10.0" style="-fx-padding: 10;">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="ALWAYS" prefWidth="180.0" />
+                    </columnConstraints>
+                </GridPane>
+            </ScrollPane>
+
+            <VBox.margin>
+                <Insets bottom="5.0" />
+            </VBox.margin>
+        </VBox>
+    </left>
+
+    <!-- Center Panel - Product Details & Selection -->
+    <center>
+        <VBox spacing="15.0" style="-fx-padding: 15;" alignment="TOP_CENTER">
+            <Text text="Add Product to Cart" style="-fx-font-size: 18; -fx-font-weight: bold;" />
+            
+            <!-- Customer Selection -->
+            <VBox spacing="10.0" style="-fx-border-color: #ddd; -fx-border-radius: 5; -fx-padding: 15; -fx-background-color: #f0f8ff;">
+                <Label text="Customer Information" style="-fx-font-weight: bold; -fx-font-size: 12;" />
+                <HBox spacing="10.0">
+                    <Label text="Phone Number:" prefWidth="120.0" />
+                    <TextField fx:id="customerPhoneField" promptText="Enter customer phone..." HBox.hgrow="ALWAYS" />
+                    <Button fx:id="lookupCustomerBtn" text="Lookup" onAction="#handleCustomerLookup" 
+                            style="-fx-padding: 8; -fx-background-color: #0F3D20; -fx-text-fill: white;" 
+                            prefWidth="80.0" />
+                </HBox>
+                <HBox spacing="10.0">
+                    <Label text="Customer Type:" prefWidth="120.0" />
+                    <TextField fx:id="customerTypeField" editable="false" HBox.hgrow="ALWAYS" />
+                </HBox>
+                <Text fx:id="discountPercentText" style="-fx-font-size: 12; -fx-fill: green; -fx-font-weight: bold;" />
+            </VBox>
+            
+            <VBox spacing="10.0" style="-fx-border-color: #ddd; -fx-border-radius: 5; -fx-padding: 15;">
+                <!-- Product Selection -->
+                <HBox spacing="10.0">
+                    <Label text="Selected Product:" prefWidth="120.0" />
+                    <TextField fx:id="selectedProductField" editable="false" HBox.hgrow="ALWAYS" />
+                </HBox>
+
+                <!-- Product Price -->
+                <HBox spacing="10.0">
+                    <Label text="Price (Unit):" prefWidth="120.0" />
+                    <TextField fx:id="productPriceField" editable="false" prefWidth="150.0" />
+                </HBox>
+
+                <!-- Discount Info -->
+                <HBox spacing="10.0">
+                    <Label text="Available Discounts:" prefWidth="120.0" />
+                    <TextField fx:id="discountInfoField" editable="false" HBox.hgrow="ALWAYS" />
+                </HBox>
+
+                <!-- Quantity Input -->
+                <HBox spacing="10.0" alignment="CENTER_LEFT">
+                    <Label text="Quantity:" prefWidth="120.0" />
+                    <TextField fx:id="quantityField" prefWidth="100.0" promptText="Enter qty..." />
+                    <Button fx:id="addToCartBtn" text="Add to Cart" onAction="#handleAddToCart" 
+                            style="-fx-padding: 8; -fx-background-color: #0F3D20; -fx-text-fill: white;" 
+                            prefWidth="120.0" />
+                </HBox>
+            </VBox>
+
+            <Region VBox.vgrow="ALWAYS" />
+        </VBox>
+    </center>
+
+    <!-- Right Panel - Shopping Cart & Billing -->
+    <right>
+        <VBox spacing="10.0" style="-fx-padding: 15; -fx-border-color: #ddd; -fx-border-width: 0 0 0 1; -fx-background-color: #f9f9f9;">
+            <Text text="Shopping Cart" style="-fx-font-size: 18; -fx-font-weight: bold; -fx-fill: #0F3D20;" />
+
+            <!-- Cart Items List -->
+            <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent;">
+                <VBox fx:id="cartItemsBox" spacing="8.0" style="-fx-padding: 5;">
+                    <!-- Items will be added dynamically -->
+                </VBox>
+            </ScrollPane>
+
+            <!-- Cart Summary -->
+            <VBox spacing="8.0" style="-fx-border-color: #ddd; -fx-border-width: 1 0 0 0; -fx-padding: 10 0 0 0;">
+                <HBox spacing="10.0">
+                    <Label text="Subtotal:" prefWidth="80.0" />
+                    <Text fx:id="subtotalText" text="Rs. 0.00" style="-fx-font-size: 14; -fx-font-weight: bold;" />
+                </HBox>
+
+                <HBox spacing="10.0">
+                    <Label text="Discount:" prefWidth="80.0" />
+                    <Text fx:id="discountText" text="Rs. 0.00" style="-fx-font-size: 14; -fx-fill: green;" />
+                </HBox>
+
+                <Separator />
+
+                <HBox spacing="10.0">
+                    <Label text="Total:" prefWidth="80.0" style="-fx-font-weight: bold; -fx-font-size: 16;" />
+                    <Text fx:id="totalText" text="Rs. 0.00" 
+                          style="-fx-font-size: 16; -fx-font-weight: bold; -fx-fill: #0F3D20;" />
+                </HBox>
+            </VBox>
+
+            <!-- Action Buttons -->
+            <HBox spacing="8.0">
+                <Button fx:id="clearCartBtn" text="Clear Cart" onAction="#handleClearCart" 
+                        prefWidth="95.0" style="-fx-padding: 10; -fx-background-color: #cc0000; -fx-text-fill: white;" />
+                <Button fx:id="payBtn" text="Proceed to Pay" onAction="#handleCheckout" 
+                        prefWidth="115.0" style="-fx-padding: 10; -fx-background-color: green; -fx-text-fill: white;" />
+            </HBox>
+        </VBox>
+    </right>
+
+</BorderPane>

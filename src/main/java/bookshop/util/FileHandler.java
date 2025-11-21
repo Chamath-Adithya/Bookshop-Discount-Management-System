@@ -1,8 +1,12 @@
 package bookshop.util;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +22,27 @@ public final class FileHandler {
      * @throws IOException If an I/O error occurs.
      */
     public static List<String> readCsv(String filePath) throws IOException {
-        return Files.readAllLines(Paths.get(filePath));
+        Path p = Paths.get(filePath);
+        if (!Files.exists(p)) {
+            return new ArrayList<>();
+        }
+        return Files.readAllLines(p, StandardCharsets.UTF_8);
+    }
+
+    public static void appendLine(String filePath, String line) throws IOException {
+        Path p = Paths.get(filePath);
+        if (p.getParent() != null && !Files.exists(p.getParent())) {
+            Files.createDirectories(p.getParent());
+        }
+        Files.write(p, (line + System.lineSeparator()).getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+    }
+
+    public static void writeCsv(String filePath, List<String> lines) throws IOException {
+        Path p = Paths.get(filePath);
+        if (p.getParent() != null && !Files.exists(p.getParent())) {
+            Files.createDirectories(p.getParent());
+        }
+        Files.write(p, lines, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
     }
 
     public static Map<Integer, Double> parseDiscountString(String discounts) {

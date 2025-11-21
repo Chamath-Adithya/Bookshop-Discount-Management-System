@@ -35,7 +35,15 @@ public class ProductService {
                     discountsStr = discountsStr.substring(1, discountsStr.length() - 1);
                 }
                 Map<Integer, Double> discountRules = FileHandler.parseDiscountString(discountsStr);
-                Product product = new Product(productId, productName, realPrice, discountRules);
+                int qty = 0;
+                if (columns.length >= 5) {
+                    try {
+                        qty = Integer.parseInt(columns[4].trim());
+                    } catch (NumberFormatException nfe) {
+                        qty = 0;
+                    }
+                }
+                Product product = new Product(productId, productName, realPrice, discountRules, qty);
                 products.add(product);
             }
         }
@@ -61,5 +69,53 @@ public class ProductService {
             }
         }
         return null;
+    }
+
+    /**
+     * Add a product to the CSV file and in-memory list.
+     */
+    public void addProduct(Product product) throws IOException {
+        // Serialize product line: id,name,realPrice,"discounts"
+        String discounts = FileHandler.serializeDiscountMap(product.getDiscountRules());
+        String line = String.format("%s,%s,%.2f,\"%s\",%d", product.getProductId(), product.getName(), product.getRealPrice(), discounts == null ? "" : discounts, product.getQuantity());
+        FileHandler.appendLine(PRODUCTS_FILE_PATH, line);
+        this.products.add(product);
+    }
+
+    /**
+     * Delete a product by id and persist changes.
+     */
+    public void deleteProduct(String productId) throws IOException {
+        products.removeIf(p -> p.getProductId().equals(productId));
+        saveAllProducts();
+    }
+
+    /**
+     * Update an existing product (matching by id) and persist.
+     */
+    public void updateProduct(Product updated) throws IOException {
+        for (int i = 0; i < products.size(); i++) {
+            if (products.get(i).getProductId().equals(updated.getProductId())) {
+                products.set(i, updated);
+                saveAllProducts();
+                return;
+            }
+        }
+        // if not found, add
+        addProduct(updated);
+    }
+
+    /**
+     * Save all products to the CSV file (overwrite).
+     */
+    public void saveAllProducts() throws IOException {
+        List<String> lines = new ArrayList<>();
+        lines.add("product_id,product_name,real_price,discounts,quantity");
+        for (Product p : products) {
+            String discounts = FileHandler.serializeDiscountMap(p.getDiscountRules());
+            String line = String.format("%s,%s,%.2f,\"%s\",%d", p.getProductId(), p.getName(), p.getRealPrice(), discounts == null ? "" : discounts, p.getQuantity());
+            lines.add(line);
+        }
+        FileHandler.writeCsv(PRODUCTS_FILE_PATH, lines);
     }
 }

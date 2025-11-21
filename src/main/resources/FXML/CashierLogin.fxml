@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="300.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="bookshop.controllers.CashierLoginController">
+    <children>
+        <VBox alignment="CENTER" spacing="10.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0" AnchorPane.bottomAnchor="20.0">
+            <children>
+                <Text text="Cashier Login">
+                    <font>
+                        <Font size="20.0" />
+                    </font>
+                </Text>
+                <Label text="Username" />
+                <TextField fx:id="username_fld" promptText="Enter username" />
+                <Label text="Password" />
+                <PasswordField fx:id="password_fld" promptText="Enter password" />
+                <Button fx:id="login_btn" text="Login" onAction="#handleLogin" prefWidth="120" />
+                <Label fx:id="error_lbl" textFill="red" />
+                <Hyperlink text="Back" onAction="#handleBack" />
+            </children>
+        </VBox>
+    </children>
+</AnchorPane>

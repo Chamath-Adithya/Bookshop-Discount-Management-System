@@ -35,6 +35,11 @@ public class CustomerService {
                 } else {
                     customer = new RegularCustomer(customerId, customerName);
                 }
+                // optional phone column
+                if (columns.length >= 4) {
+                    String phone = columns[3].trim();
+                    customer.setPhone(phone);
+                }
                 customers.add(customer);
             }
         }
@@ -51,5 +56,59 @@ public class CustomerService {
             }
         }
         return null;
+    }
+
+    /**
+     * Persist the current customers list to CSV (overwrite)
+     */
+    public void saveAllCustomers() throws IOException {
+        List<String> lines = new ArrayList<>();
+        lines.add("customer_id,customer_name,customer_type,phone");
+        for (Customer c : customers) {
+            String phone = c.getPhone() == null ? "" : c.getPhone();
+            String line = String.format("%s,%s,%s,%s", c.getCustomerId(), c.getName(), c.getType(), phone);
+            lines.add(line);
+        }
+        FileHandler.writeCsv(CUSTOMERS_FILE_PATH, lines);
+    }
+
+    public void addCustomer(Customer customer) throws IOException {
+        // append to file and add to memory
+        String phone = customer.getPhone() == null ? "" : customer.getPhone();
+        String line = String.format("%s,%s,%s,%s", customer.getCustomerId(), customer.getName(), customer.getType(), phone);
+        FileHandler.appendLine(CUSTOMERS_FILE_PATH, line);
+        this.customers.add(customer);
+    }
+
+    public void updateCustomer(Customer customer) throws IOException {
+        Customer existing = findCustomerById(customer.getCustomerId());
+        if (existing != null) {
+            // Name and phone can be updated directly
+            existing.setName(customer.getName());
+            existing.setPhone(customer.getPhone());
+            // If type changed, replace the object with a new instance of the proper subclass
+            if (!existing.getType().equalsIgnoreCase(customer.getType())) {
+                Customer replacement;
+                if ("VIP".equalsIgnoreCase(customer.getType())) {
+                    replacement = new VIPCustomer(existing.getCustomerId(), customer.getName());
+                } else {
+                    replacement = new RegularCustomer(existing.getCustomerId(), customer.getName());
+                }
+                replacement.setPhone(customer.getPhone());
+                // replace in list
+                for (int i = 0; i < customers.size(); i++) {
+                    if (customers.get(i).getCustomerId().equals(existing.getCustomerId())) {
+                        customers.set(i, replacement);
+                        break;
+                    }
+                }
+            }
+            saveAllCustomers();
+        }
+    }
+
+    public void deleteCustomer(String customerId) throws IOException {
+        customers.removeIf(c -> c.getCustomerId().equals(customerId));
+        saveAllCustomers();
     }
 }

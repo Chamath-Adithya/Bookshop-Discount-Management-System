@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.cell.*?>
+<?import javafx.collections.*?>
+
+<AnchorPane prefHeight="700.0" prefWidth="1200.0" stylesheets="@../../Styles/Admin.css" 
+            xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" 
+            fx:controller="bookshop.controllers.Admin.AdminController">
+    
+    <children>
+        <!-- Top Header Bar -->
+        <AnchorPane prefHeight="80.0" style="-fx-background-color: #0F3D20;" AnchorPane.topAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+            <children>
+                <HBox alignment="CENTER_LEFT" spacing="20.0" AnchorPane.topAnchor="10.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.bottomAnchor="10.0">
+                    <children>
+                        <Text fill="WHITE" text="ADMIN DASHBOARD" wrappingWidth="300.0">
+                            <font>
+                                <Font name="System Bold" size="28.0" />
+                            </font>
+                        </Text>
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Text fx:id="adminNameText" fill="WHITE" text="Admin User">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                        </Text>
+                        <Button fx:id="logoutButton" mnemonicParsing="false" onAction="#handleLogout" style="-fx-background-color: #cc0000; -fx-text-fill: white; -fx-padding: 8;" text="Logout" />
+                    </children>
+                </HBox>
+            </children>
+        </AnchorPane>
+
+        <!-- Main Content Area -->
+        <HBox spacing="10.0" AnchorPane.topAnchor="90.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">
+            
+            <!-- Left Sidebar Menu -->
+            <VBox prefWidth="200.0" spacing="10.0" style="-fx-background-color: #f0f0f0; -fx-border-radius: 5;">
+                <children>
+                    <Label text="Menu" style="-fx-text-fill: #0F3D20; -fx-font-size: 16; -fx-font-weight: bold;">
+                        <VBox.margin>
+                            <Insets top="10.0" left="10.0" />
+                        </VBox.margin>
+                    </Label>
+                    <Separator />
+                    <Button fx:id="productsBtn" mnemonicParsing="false" onAction="#handleProductsMenu" prefWidth="180.0" style="-fx-background-color: #0F3D20; -fx-text-fill: white; -fx-padding: 10;" text="Products" />
+                    <Button fx:id="discountsBtn" mnemonicParsing="false" onAction="#handleDiscountsMenu" prefWidth="180.0" style="-fx-background-color: #0F3D20; -fx-text-fill: white; -fx-padding: 10;" text="Discounts" />
+                    <Button fx:id="customersBtn" mnemonicParsing="false" onAction="#handleCustomersMenu" prefWidth="180.0" style="-fx-background-color: #0F3D20; -fx-text-fill: white; -fx-padding: 10;" text="Customers" />
+                    <Button fx:id="usersBtn" mnemonicParsing="false" onAction="#handleUsersMenu" prefWidth="180.0" style="-fx-background-color: #0F3D20; -fx-text-fill: white; -fx-padding: 10;" text="Users" />
+                    <Button fx:id="reportsBtn" mnemonicParsing="false" onAction="#handleReportsMenu" prefWidth="180.0" style="-fx-background-color: #0F3D20; -fx-text-fill: white; -fx-padding: 10;" text="Reports" />
+                    <Region VBox.vgrow="ALWAYS" />
+                </children>
+                <padding>
+                    <Insets bottom="10.0" left="0.0" right="10.0" top="0.0" />
+                </padding>
+                <HBox.margin>
+                    <Insets right="10.0" />
+                </HBox.margin>
+            </VBox>
+
+            <!-- Right Content Area (Tabs) -->
+            <TabPane fx:id="contentTabPane" tabClosingPolicy="UNAVAILABLE" HBox.hgrow="ALWAYS">
+                
+                <!-- Products Tab -->
+                <Tab text="Products" closable="false">
+                    <VBox spacing="10.0">
+                        <children>
+                            <!-- Add Product Section -->
+                            <VBox spacing="10.0" style="-fx-border-color: #ccc; -fx-border-radius: 5; -fx-padding: 10;">
+                                <children>
+                                    <Label style="-fx-text-fill: #0F3D20; -fx-font-size: 14; -fx-font-weight: bold;" text="Add Product" />
+                                    <HBox spacing="10.0">
+                                        <children>
+                                            <TextField fx:id="productIdField" prefWidth="100.0" promptText="Product ID" />
+                                            <TextField fx:id="productNameField" prefWidth="150.0" promptText="Product Name" HBox.hgrow="ALWAYS" />
+                                            <TextField fx:id="productPriceField" prefWidth="100.0" promptText="Price" />
+                                            <TextField fx:id="productQtyField" prefWidth="100.0" promptText="Quantity" />
+                                            <Button fx:id="addProductBtn" mnemonicParsing="false" onAction="#handleAddProduct" style="-fx-background-color: #0F3D20; -fx-text-fill: white;" text="Add" />
+                                        </children>
+                                    </HBox>
+                                </children>
+                            </VBox>
+
+                            <!-- Products List -->
+                            <TableView fx:id="productsTable" prefHeight="300.0" VBox.vgrow="ALWAYS">
+                                <columns>
+                                    <TableColumn fx:id="productIdCol" prefWidth="80.0" text="ID" />
+                                    <TableColumn fx:id="productNameCol" prefWidth="200.0" text="Name" />
+                                    <TableColumn fx:id="productPriceCol" prefWidth="100.0" text="Price" />
+                                    <TableColumn fx:id="productQtyCol" prefWidth="100.0" text="Quantity" />
+                                    <TableColumn fx:id="productActionCol" prefWidth="120.0" text="Actions" />
+                                </columns>
+                            </TableView>
+                        </children>
+                        <padding>
+                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                        </padding>
+                    </VBox>
+                </Tab>
+
+                <!-- Discounts Tab -->
+                <Tab text="Discounts" closable="false">
+                    <VBox spacing="10.0">
+                        <children>
+                            <!-- Add Discount Section -->
+                            <VBox spacing="10.0" style="-fx-border-color: #ccc; -fx-border-radius: 5; -fx-padding: 10;">
+                                <children>
+                                    <Label style="-fx-text-fill: #0F3D20; -fx-font-size: 14; -fx-font-weight: bold;" text="Create Discount" />
+                                    <HBox spacing="10.0">
+                                        <children>
+                                            <TextField fx:id="discountCodeField" prefWidth="120.0" promptText="Discount Code" />
+                                            <TextField fx:id="discountTypeField" prefWidth="100.0" promptText="Type (FLAT/PERCENT)" />
+                                            <TextField fx:id="discountValueField" prefWidth="100.0" promptText="Value" />
+                                            <TextField fx:id="discountMinAmountField" prefWidth="120.0" promptText="Min Amount" />
+                                            <Button fx:id="addDiscountBtn" mnemonicParsing="false" onAction="#handleAddDiscount" style="-fx-background-color: #0F3D20; -fx-text-fill: white;" text="Add Discount" />
+                                        </children>
+                                    </HBox>
+                                </children>
+                            </VBox>
+
+                            <!-- Discounts List -->
+                            <TableView fx:id="discountsTable" prefHeight="300.0" VBox.vgrow="ALWAYS">
+                                <columns>
+                                    <TableColumn fx:id="discountCodeCol" prefWidth="120.0" text="Code" />
+                                    <TableColumn fx:id="discountTypeCol" prefWidth="100.0" text="Type" />
+                                    <TableColumn fx:id="discountValueCol" prefWidth="100.0" text="Value" />
+                                    <TableColumn fx:id="discountMinCol" prefWidth="120.0" text="Min Amount" />
+                                    <TableColumn fx:id="discountActionCol" prefWidth="120.0" text="Actions" />
+                                </columns>
+                            </TableView>
+                        </children>
+                        <padding>
+                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                        </padding>
+                    </VBox>
+                </Tab>
+
+                <!-- Customers Tab -->
+                <Tab text="Customers" closable="false">
+                    <VBox spacing="10.0">
+                        <children>
+                            <HBox spacing="10.0">
+                                <children>
+                                    <Button mnemonicParsing="false" onAction="#handleAddCustomer" style="-fx-background-color: #0F3D20; -fx-text-fill: white;" text="Add Customer" />
+                                </children>
+                            </HBox>
+                            <!-- Customers List -->
+                            <TableView fx:id="customersTable" prefHeight="400.0" VBox.vgrow="ALWAYS">
+                                <columns>
+                                    <TableColumn fx:id="customerIdCol" prefWidth="80.0" text="ID" />
+                                    <TableColumn fx:id="customerNameCol" prefWidth="150.0" text="Name" />
+                                    <TableColumn fx:id="customerTypeCol" prefWidth="120.0" text="Type (VIP/Regular)" />
+                                    <TableColumn fx:id="customerPhoneCol" prefWidth="150.0" text="Phone" />
+                                    <TableColumn fx:id="customerActionCol" prefWidth="120.0" text="Actions" />
+                                </columns>
+                            </TableView>
+                        </children>
+                        <padding>
+                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                        </padding>
+                    </VBox>
+                </Tab>
+
+                <!-- Users Tab -->
+                <Tab text="Users" closable="false">
+                    <VBox spacing="10.0">
+                        <children>
+                            <!-- Add User Section -->
+                            <VBox spacing="10.0" style="-fx-border-color: #ccc; -fx-border-radius: 5; -fx-padding: 10;">
+                                <children>
+                                    <Label style="-fx-text-fill: #0F3D20; -fx-font-size: 14; -fx-font-weight: bold;" text="Add User" />
+                                    <HBox spacing="10.0">
+                                        <children>
+                                            <TextField fx:id="userIdField" prefWidth="100.0" promptText="User ID" />
+                                            <TextField fx:id="userUsernameField" prefWidth="120.0" promptText="Username" />
+                                            <PasswordField fx:id="userPasswordField" prefWidth="120.0" promptText="Password" />
+                                            <TextField fx:id="userRoleField" prefWidth="100.0" promptText="Role (MANAGER/WORKER)" />
+                                            <Button fx:id="addUserBtn" mnemonicParsing="false" onAction="#handleAddUser" style="-fx-background-color: #0F3D20; -fx-text-fill: white;" text="Add User" />
+                                        </children>
+                                    </HBox>
+                                </children>
+                            </VBox>
+
+                            <!-- Users List -->
+                            <TableView fx:id="usersTable" prefHeight="300.0" VBox.vgrow="ALWAYS">
+                                <columns>
+                                    <TableColumn fx:id="userIdCol" prefWidth="80.0" text="ID" />
+                                    <TableColumn fx:id="userUsernameCol" prefWidth="120.0" text="Username" />
+                                    <TableColumn fx:id="userRoleCol" prefWidth="100.0" text="Role" />
+                                    <TableColumn fx:id="userActionCol" prefWidth="120.0" text="Actions" />
+                                </columns>
+                            </TableView>
+                        </children>
+                        <padding>
+                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                        </padding>
+                    </VBox>
+                </Tab>
+
+                <!-- Reports Tab -->
+                <Tab text="Reports" closable="false">
+                    <VBox spacing="10.0">
+                        <children>
+                            <Label style="-fx-text-fill: #0F3D20; -fx-font-size: 16; -fx-font-weight: bold;" text="Reports Dashboard" />
+                            <HBox spacing="10.0">
+                                <children>
+                                    <Button fx:id="salesReportBtn" mnemonicParsing="false" onAction="#handleSalesReport" style="-fx-background-color: #0F3D20; -fx-text-fill: white; -fx-padding: 10;" text="Sales Report" />
+                                    <Button fx:id="inventoryReportBtn" mnemonicParsing="false" onAction="#handleInventoryReport" style="-fx-background-color: #0F3D20; -fx-text-fill: white; -fx-padding: 10;" text="Inventory Report" />
+                                    <Button fx:id="customersReportBtn" mnemonicParsing="false" onAction="#handleCustomersReport" style="-fx-background-color: #0F3D20; -fx-text-fill: white; -fx-padding: 10;" text="Customers Report" />
+                                </children>
+                            </HBox>
+                            <TextArea fx:id="reportTextArea" prefHeight="300.0" wrapText="true" VBox.vgrow="ALWAYS" />
+                        </children>
+                        <padding>
+                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                        </padding>
+                    </VBox>
+                </Tab>
+            </TabPane>
+        </HBox>
+    </children>
+</AnchorPane>

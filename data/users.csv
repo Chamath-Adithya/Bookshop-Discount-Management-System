@@ -1,1 +1,6 @@
 # user_id,username,password,role
+# user_id,username,password,role
+u02,admin,admin123,MANAGER
+u04,john,john456,WORKER
+u05,sarah,sarah789,WORKER
+u06,yasaru,yasaru123,WORKER
