@@ -538,6 +538,10 @@ public class AdminController {
      * Shows a custom dialog to manage discounts for a product.
      * Supports multiple discount tiers.
      */
+    /**
+     * Shows a custom dialog to manage discounts for a product.
+     * Supports multiple discount tiers.
+     */
     private void showDiscountDialog(Product p) {
         Dialog<Boolean> dialog = new Dialog<>();
         dialog.setTitle("Manage Discount");
@@ -551,6 +555,23 @@ public class AdminController {
         VBox mainBox = new VBox(15);
         mainBox.setPadding(new Insets(20));
         mainBox.setStyle("-fx-pref-width: 500px;");
+
+        // Initial content population
+        updateDiscountDialogContent(p, mainBox);
+
+        dialog.getDialogPane().setContent(mainBox);
+        
+        // Refresh table when dialog closes
+        dialog.setOnHidden(ev -> loadProductsData());
+
+        dialog.showAndWait();
+    }
+
+    /**
+     * Helper to rebuild the discount dialog content.
+     */
+    private void updateDiscountDialogContent(Product p, VBox mainBox) {
+        mainBox.getChildren().clear();
 
         // Title
         Label titleLabel = new Label("Current Discount Rules:");
@@ -567,30 +588,32 @@ public class AdminController {
             noRules.setStyle("-fx-text-fill: #666; -fx-font-style: italic;");
             rulesBox.getChildren().add(noRules);
         } else {
-            for (Map.Entry<Integer, Double> rule : p.getDiscountRules().entrySet()) {
-                HBox ruleRow = new HBox(10);
-                ruleRow.setStyle("-fx-alignment: center-left; -fx-padding: 5;");
-                
-                Label ruleLabel = new Label("Buy " + rule.getKey() + "+ @ $" + String.format("%.2f", rule.getValue()));
-                ruleLabel.setStyle("-fx-font-size: 12px; -fx-min-width: 200px;");
-                
-                Button deleteBtn = new Button("Remove");
-                deleteBtn.setStyle("-fx-background-color: #F44336; -fx-text-fill: white; -fx-font-size: 10px;");
-                deleteBtn.setOnAction(ev -> {
-                    try {
-                        p.removeDiscount(rule.getKey());
-                        productService.saveAllProducts();
-                        showInfo("Rule removed!");
-                        dialog.close();
-                        showDiscountDialog(p); // Reopen to refresh
-                    } catch (Exception ex) {
-                        showError("Failed to remove: " + ex.getMessage());
-                    }
+            // Sort rules by quantity for better display
+            p.getDiscountRules().entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .forEach(rule -> {
+                    HBox ruleRow = new HBox(10);
+                    ruleRow.setStyle("-fx-alignment: center-left; -fx-padding: 5;");
+                    
+                    Label ruleLabel = new Label("Buy " + rule.getKey() + "+ @ $" + String.format("%.2f", rule.getValue()));
+                    ruleLabel.setStyle("-fx-font-size: 12px; -fx-min-width: 200px;");
+                    
+                    Button deleteBtn = new Button("Remove");
+                    deleteBtn.setStyle("-fx-background-color: #F44336; -fx-text-fill: white; -fx-font-size: 10px;");
+                    deleteBtn.setOnAction(ev -> {
+                        try {
+                            p.removeDiscount(rule.getKey());
+                            productService.saveAllProducts();
+                            // Refresh content in-place
+                            updateDiscountDialogContent(p, mainBox);
+                        } catch (Exception ex) {
+                            showError("Failed to remove: " + ex.getMessage());
+                        }
+                    });
+                    
+                    ruleRow.getChildren().addAll(ruleLabel, deleteBtn);
+                    rulesBox.getChildren().add(ruleRow);
                 });
-                
-                ruleRow.getChildren().addAll(ruleLabel, deleteBtn);
-                rulesBox.getChildren().add(ruleRow);
-            }
         }
         
         mainBox.getChildren().add(rulesBox);
@@ -618,9 +641,8 @@ public class AdminController {
                 double price = Double.parseDouble(priceField.getText());
                 p.setDiscount(qty, price);
                 productService.saveAllProducts();
-                showInfo("Discount rule added!");
-                dialog.close();
-                showDiscountDialog(p); // Reopen to refresh
+                // Refresh content in-place
+                updateDiscountDialogContent(p, mainBox);
             } catch (NumberFormatException ex) {
                 showError("Invalid input format.");
             } catch (Exception ex) {
@@ -645,22 +667,19 @@ public class AdminController {
                     p.clearDiscounts();
                     productService.saveAllProducts();
                     showInfo("All discounts cleared!");
-                    dialog.close();
-                    loadProductsData();
+                    // Refresh content in-place
+                    updateDiscountDialogContent(p, mainBox);
                 } catch (Exception ex) {
                     showError("Failed to clear: " + ex.getMessage());
                 }
             });
             mainBox.getChildren().add(clearAllBtn);
         }
-
-        dialog.getDialogPane().setContent(mainBox);
-        dialog.setResultConverter(dialogButton -> {
-            loadProductsData(); // Refresh table on close
-            return null;
-        });
-
-        dialog.showAndWait();
+        
+        // Resize dialog to fit new content
+        if (mainBox.getScene() != null && mainBox.getScene().getWindow() != null) {
+            mainBox.getScene().getWindow().sizeToScene();
+        }
     }
 
 
