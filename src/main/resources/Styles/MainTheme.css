@@ -11,6 +11,10 @@
     -fx-text-fill: #333333;
     -fx-font-family: 'Segoe UI', sans-serif;
 
+    /* -fx-background-color: -fx-bg-color;  <-- REMOVED to prevent StackOverflow */
+}
+
+.app-background {
     -fx-background-color: -fx-bg-color;
 }
 
