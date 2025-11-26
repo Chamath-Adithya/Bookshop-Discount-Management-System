@@ -73,13 +73,43 @@ public class ProductService {
 
     /**
      * Add a product to the CSV file and in-memory list.
+     * If the product ID is null or empty, it will be auto-generated.
      */
     public void addProduct(Product product) throws IOException {
+        if (product.getProductId() == null || product.getProductId().trim().isEmpty()) {
+            product.setProductId(generateNextProductId());
+        }
         // Serialize product line: id,name,realPrice,"discounts"
         String discounts = FileHandler.serializeDiscountMap(product.getDiscountRules());
         String line = String.format("%s,%s,%.2f,\"%s\",%d", product.getProductId(), product.getName(), product.getRealPrice(), discounts == null ? "" : discounts, product.getQuantity());
         FileHandler.appendLine(PRODUCTS_FILE_PATH, line);
         this.products.add(product);
+    }
+
+    /**
+     * Generates the next available product ID based on the current list.
+     * Assumes IDs are in the format "pXX" or "PXX" where XX is a number.
+     * @return The next product ID (e.g., "p06").
+     */
+    public String generateNextProductId() {
+        int maxId = 0;
+        for (Product p : products) {
+            String id = p.getProductId();
+            // Extract number from ID (e.g., "p01" -> 1)
+            try {
+                String numPart = id.replaceAll("[^0-9]", "");
+                if (!numPart.isEmpty()) {
+                    int num = Integer.parseInt(numPart);
+                    if (num > maxId) {
+                        maxId = num;
+                    }
+                }
+            } catch (NumberFormatException e) {
+                // Ignore malformed IDs
+            }
+        }
+        // Generate next ID with padding (e.g., p06)
+        return String.format("p%02d", maxId + 1);
     }
 
     /**

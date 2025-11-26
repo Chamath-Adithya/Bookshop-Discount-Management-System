@@ -73,11 +73,40 @@ public class CustomerService {
     }
 
     public void addCustomer(Customer customer) throws IOException {
+        if (customer.getCustomerId() == null || customer.getCustomerId().trim().isEmpty()) {
+            customer.setCustomerId(generateNextCustomerId());
+        }
         // append to file and add to memory
         String phone = customer.getPhone() == null ? "" : customer.getPhone();
         String line = String.format("%s,%s,%s,%s", customer.getCustomerId(), customer.getName(), customer.getType(), phone);
         FileHandler.appendLine(CUSTOMERS_FILE_PATH, line);
         this.customers.add(customer);
+    }
+
+    /**
+     * Generates the next available customer ID based on the current list.
+     * Assumes IDs are in the format "cXX" or "CXX" where XX is a number.
+     * @return The next customer ID (e.g., "c06").
+     */
+    public String generateNextCustomerId() {
+        int maxId = 0;
+        for (Customer c : customers) {
+            String id = c.getCustomerId();
+            // Extract number from ID (e.g., "c01" -> 1)
+            try {
+                String numPart = id.replaceAll("[^0-9]", "");
+                if (!numPart.isEmpty()) {
+                    int num = Integer.parseInt(numPart);
+                    if (num > maxId) {
+                        maxId = num;
+                    }
+                }
+            } catch (NumberFormatException e) {
+                // Ignore malformed IDs
+            }
+        }
+        // Generate next ID with padding (e.g., c06)
+        return String.format("c%02d", maxId + 1);
     }
 
     public void updateCustomer(Customer customer) throws IOException {

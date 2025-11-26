@@ -2,3 +2,4 @@ product_id,product_name,real_price,discounts,quantity
 1,Pen,50.00,"10:40.0",100
 3,Pencil,20.00,"",80
 4,cat,1000.00,"",5
+p05,dog,1000.00,"",50

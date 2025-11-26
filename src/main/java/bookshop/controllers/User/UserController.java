@@ -220,14 +220,8 @@ public class UserController {
         String searchTerm = searchField.getText().trim();
         System.out.println("[UserController] Search button clicked. Searching for: " + searchTerm);
 
-        if (searchTerm.isEmpty()) {
-            System.out.println("[UserController] Search term is empty");
-            return;
-        }
-
-        // TODO: Filter products based on search term and display in GridPane
-        // For now, just log the search
-        System.out.println("[UserController] Displaying search results for: " + searchTerm);
+        // Filter products based on search term
+        loadProductsToGrid(searchTerm);
     }
 
     /**
@@ -276,8 +270,13 @@ public class UserController {
     
     /**
      * Loads all products from ProductService and displays them in the products grid.
+     * Can optionally filter by a search term.
      */
     private void loadProductsToGrid() {
+        loadProductsToGrid(null);
+    }
+
+    private void loadProductsToGrid(String searchTerm) {
         try {
             if (productService == null) {
                 productService = new ProductService();
@@ -298,6 +297,15 @@ public class UserController {
                         int colIndex = 0;
                         int rowIndex = 0;
                         for (Product product : allProducts) {
+                            // Filter logic
+                            if (searchTerm != null && !searchTerm.isEmpty()) {
+                                String lowerTerm = searchTerm.toLowerCase();
+                                boolean matches = product.getName().toLowerCase().contains(lowerTerm) || 
+                                                  product.getProductId().toLowerCase().contains(lowerTerm);
+                                if (!matches) {
+                                    continue;
+                                }
+                            }
                             // Create product card
                             javafx.scene.layout.VBox productCard = new javafx.scene.layout.VBox();
                             productCard.setAlignment(javafx.geometry.Pos.CENTER);
