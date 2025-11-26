@@ -391,6 +391,24 @@ public class UserController {
             // For now, just show receipt
             showReceipt(finalAmount);
             
+            // Log transaction for reports
+            try {
+                String timestamp = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+                for (CartItem item : shoppingCart.values()) {
+                    // Format: timestamp,product_id,product_name,quantity,unit_price,total_price
+                    String line = String.format("%s,%s,%s,%d,%.2f,%.2f",
+                            timestamp,
+                            item.product.getProductId(),
+                            item.product.getName(),
+                            item.quantity,
+                            item.product.getRealPrice(),
+                            item.subtotal);
+                    bookshop.util.FileHandler.appendLine("data/transactions.csv", line);
+                }
+            } catch (IOException e) {
+                System.err.println("[UserController] Failed to log transaction: " + e.getMessage());
+            }
+
             // Clear cart after successful payment
             shoppingCart.clear();
             totalAmount = 0.0;

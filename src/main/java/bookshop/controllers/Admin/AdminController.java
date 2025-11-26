@@ -528,13 +528,53 @@ public class AdminController {
     @FXML
     private void handleSalesReport(ActionEvent event) {
         System.out.println("[AdminController] Sales Report generated");
-        String reportText = "=== SALES REPORT ===\n\n"
-                          + "Total Sales: Rs. 50,000\n"
-                          + "Total Transactions: 250\n"
-                          + "Average Transaction: Rs. 200\n"
-                          + "Top Product: Pen (500 units sold)\n"
-                          + "Report Period: November 2025";
-        reportTextArea.setText(reportText);
+        try {
+            List<String> lines = FileHandler.readCsv("data/transactions.csv");
+            double totalSales = 0.0;
+            int totalTransactions = 0; // Each line is a line item, not a full transaction, but we can count items sold
+            int totalItemsSold = 0;
+            
+            // Map to track top products
+            java.util.Map<String, Integer> productSales = new java.util.HashMap<>();
+            
+            for (String line : lines) {
+                if (line.trim().isEmpty()) continue;
+                String[] cols = line.split(",");
+                if (cols.length >= 6) {
+                    try {
+                        int qty = Integer.parseInt(cols[3]);
+                        double total = Double.parseDouble(cols[5]);
+                        String prodName = cols[2];
+                        
+                        totalSales += total;
+                        totalItemsSold += qty;
+                        
+                        productSales.put(prodName, productSales.getOrDefault(prodName, 0) + qty);
+                    } catch (NumberFormatException e) {
+                        // skip bad lines
+                    }
+                }
+            }
+            
+            String topProduct = "N/A";
+            int maxSold = 0;
+            for (java.util.Map.Entry<String, Integer> entry : productSales.entrySet()) {
+                if (entry.getValue() > maxSold) {
+                    maxSold = entry.getValue();
+                    topProduct = entry.getKey();
+                }
+            }
+            
+            String reportText = "=== SALES REPORT ===\n\n"
+                              + "Total Revenue: Rs. " + String.format("%.2f", totalSales) + "\n"
+                              + "Total Items Sold: " + totalItemsSold + "\n"
+                              + "Top Selling Product: " + topProduct + " (" + maxSold + " units)\n"
+                              + "Report Generated: " + java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+            reportTextArea.setText(reportText);
+            
+        } catch (IOException e) {
+            reportTextArea.setText("Error generating report: " + e.getMessage() + "\n(No transactions found yet?)");
+        }
     }
 
     /**
@@ -543,13 +583,40 @@ public class AdminController {
     @FXML
     private void handleInventoryReport(ActionEvent event) {
         System.out.println("[AdminController] Inventory Report generated");
-        String reportText = "=== INVENTORY REPORT ===\n\n"
-                          + "Total Products: 50\n"
-                          + "Low Stock Items (< 10 units): 5\n"
-                          + "Out of Stock Items: 2\n"
-                          + "Total Inventory Value: Rs. 100,000\n"
-                          + "Report Generated: " + java.time.LocalDateTime.now();
-        reportTextArea.setText(reportText);
+        try {
+            if (productService == null) productService = new ProductService();
+            List<Product> products = productService.getAllProducts();
+            
+            int totalProducts = products.size();
+            int lowStock = 0;
+            int outOfStock = 0;
+            double totalValue = 0.0;
+            
+            StringBuilder lowStockList = new StringBuilder();
+            
+            for (Product p : products) {
+                totalValue += p.getRealPrice() * p.getQuantity();
+                if (p.getQuantity() == 0) {
+                    outOfStock++;
+                    lowStockList.append("- ").append(p.getName()).append(" (OUT OF STOCK)\n");
+                } else if (p.getQuantity() < 10) {
+                    lowStock++;
+                    lowStockList.append("- ").append(p.getName()).append(" (Qty: ").append(p.getQuantity()).append(")\n");
+                }
+            }
+            
+            String reportText = "=== INVENTORY REPORT ===\n\n"
+                              + "Total Unique Products: " + totalProducts + "\n"
+                              + "Total Inventory Value: Rs. " + String.format("%.2f", totalValue) + "\n"
+                              + "Out of Stock Items: " + outOfStock + "\n"
+                              + "Low Stock Items (< 10): " + lowStock + "\n\n"
+                              + "--- Low Stock / Out of Stock List ---\n"
+                              + (lowStockList.length() > 0 ? lowStockList.toString() : "All items well stocked.");
+            reportTextArea.setText(reportText);
+            
+        } catch (Exception e) {
+            reportTextArea.setText("Error generating report: " + e.getMessage());
+        }
     }
 
     /**
@@ -558,14 +625,29 @@ public class AdminController {
     @FXML
     private void handleCustomersReport(ActionEvent event) {
         System.out.println("[AdminController] Customers Report generated");
-        String reportText = "=== CUSTOMERS REPORT ===\n\n"
-                          + "Total Customers: 500\n"
-                          + "VIP Customers: 50\n"
-                          + "Regular Customers: 450\n"
-                          + "Active Customers (Last 30 days): 350\n"
-                          + "Total Customer Spending: Rs. 500,000\n"
-                          + "Report Generated: " + java.time.LocalDateTime.now();
-        reportTextArea.setText(reportText);
+        try {
+            if (customerService == null) customerService = new CustomerService();
+            List<Customer> customers = customerService.getAllCustomers();
+            
+            int total = customers.size();
+            int vip = 0;
+            int regular = 0;
+            
+            for (Customer c : customers) {
+                if ("VIP".equalsIgnoreCase(c.getType())) vip++;
+                else regular++;
+            }
+            
+            String reportText = "=== CUSTOMERS REPORT ===\n\n"
+                              + "Total Customers: " + total + "\n"
+                              + "VIP Customers: " + vip + "\n"
+                              + "Regular Customers: " + regular + "\n"
+                              + "Report Generated: " + java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+            reportTextArea.setText(reportText);
+            
+        } catch (Exception e) {
+            reportTextArea.setText("Error generating report: " + e.getMessage());
+        }
     }
 
     // --- Logout Handler ---
