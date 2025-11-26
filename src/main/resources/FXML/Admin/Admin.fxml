@@ -65,10 +65,9 @@
                     
                     <!-- Add Product Form -->
                     <HBox spacing="15" alignment="CENTER_LEFT" styleClass="card">
-                        <TextField fx:id="productIdField" promptText="ID" prefWidth="80" editable="false"/>
-                        <TextField fx:id="productNameField" promptText="Product Name" HBox.hgrow="ALWAYS"/>
-                        <TextField fx:id="productPriceField" promptText="Price" prefWidth="100"/>
-                        <TextField fx:id="productQtyField" promptText="Qty" prefWidth="80"/>
+                        <TextField fx:id="productNameField" promptText="Product Name" prefWidth="250"/>
+                        <TextField fx:id="productPriceField" promptText="Price" prefWidth="120"/>
+                        <TextField fx:id="productQtyField" promptText="Quantity" prefWidth="120"/>
                         <Button fx:id="addProductBtn" text="Add Product" onAction="#handleAddProduct"/>
                     </HBox>
                     
