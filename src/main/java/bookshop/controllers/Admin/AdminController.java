@@ -86,9 +86,6 @@ public class AdminController {
 
     //<editor-fold desc="FXML Annotations - Products Tab">
     @FXML
-    private TextField productIdField;
-
-    @FXML
     private TextField productNameField;
 
     @FXML
@@ -219,16 +216,11 @@ public class AdminController {
             System.err.println("[AdminController] Error initializing services: " + e.getMessage());
         }
 
-        // Make ID fields read-only/disabled as they are auto-generated or for display only
-        productIdField.setEditable(false);
-        productIdField.setPromptText("Auto-generated");
-        
         // Load initial data for tables
         // Setup product row selection to allow editing
         productsTable.setOnMouseClicked(e -> {
             Product selected = productsTable.getSelectionModel().getSelectedItem();
             if (selected != null) {
-                productIdField.setText(selected.getProductId());
                 productNameField.setText(selected.getName());
                 productPriceField.setText(String.valueOf(selected.getRealPrice()));
                 productQtyField.setText(String.valueOf(selected.getQuantity()));
@@ -295,12 +287,11 @@ public class AdminController {
      */
     @FXML
     private void handleAddProduct(ActionEvent event) {
-        String productId = productIdField.getText().trim();
         String productName = productNameField.getText().trim();
         String productPrice = productPriceField.getText().trim();
         String productQty = productQtyField.getText().trim();
 
-        System.out.println("[AdminController] Add/Update Product: ID=" + productId + ", Name=" + productName 
+        System.out.println("[AdminController] Add/Update Product: Name=" + productName 
                            + ", Price=" + productPrice + ", Qty=" + productQty);
 
         if (productName.isEmpty() || productPrice.isEmpty()) {
@@ -358,7 +349,6 @@ public class AdminController {
         }
 
         // Clear fields and reset editing state
-        productIdField.clear();
         productNameField.clear();
         productPriceField.clear();
         productQtyField.clear();
