@@ -23,6 +23,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceDialog;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableCell;
@@ -149,12 +150,21 @@ public class AdminController {
 
     @FXML
     private TableColumn<Customer, String> customerActionCol;
+    
+    @FXML
+    private TextField customerNameField;
+    
+    @FXML
+    private ComboBox<String> customerTypeField;
+    
+    @FXML
+    private TextField customerPhoneField;
+    
+    @FXML
+    private Button addCustomerBtn;
     //</editor-fold>
 
     //<editor-fold desc="FXML Annotations - Users Tab">
-    @FXML
-    private TextField userIdField;
-
     @FXML
     private TextField userUsernameField;
 
@@ -162,7 +172,7 @@ public class AdminController {
     private PasswordField userPasswordField;
 
     @FXML
-    private TextField userRoleField;
+    private ComboBox<String> userRoleField;
 
     @FXML
     private Button addUserBtn;
@@ -231,11 +241,19 @@ public class AdminController {
 
         loadCustomersData();
         loadUsersData();
+        
+        // Initialize role and customer type combo boxes
+        userRoleField.setItems(FXCollections.observableArrayList("MANAGER", "CASHIER", "ADMIN"));
+        customerTypeField.setItems(FXCollections.observableArrayList("REGULAR", "VIP"));
     }
 
     // --- User edit support ---
     private boolean editingUser = false;
     private String editingUserId = null;
+    
+    // --- Customer edit support ---
+    private boolean editingCustomer = false;
+    private String editingCustomerId = null;
 
     // --- Menu Button Handlers ---
 
@@ -360,24 +378,24 @@ public class AdminController {
     // --- Users Tab Handlers ---
 
     /**
-     * Handles adding a new user.
+     * Handles adding/updating a user.
      */
     @FXML
     private void handleAddUser(ActionEvent event) {
-        String userId = userIdField.getText().trim();
         String username = userUsernameField.getText().trim();
         String password = userPasswordField.getText().trim();
-        String role = userRoleField.getText().trim();
+        String role = userRoleField.getValue();
 
-        System.out.println("[AdminController] Add/Update User: ID=" + userId + ", Username=" + username + ", Role=" + role);
+        if (role == null) role = "";
+        role = role.trim();
 
-        if (userId.isEmpty() || username.isEmpty() || password.isEmpty() || role.isEmpty()) {
-            System.out.println("[AdminController] User fields are empty!");
+        if (username.isEmpty() || password.isEmpty() || role.isEmpty()) {
+            showError("Username, Password, and Role are required.");
             return;
         }
 
         try {
-            if (editingUser && editingUserId != null && editingUserId.equals(userId)) {
+            if (editingUser && editingUserId != null) {
                 // Update existing user in CSV
                 List<String> lines = FileHandler.readCsv("data/users.csv");
                 List<String> out = new ArrayList<>();
@@ -385,35 +403,66 @@ public class AdminController {
                     String t = line.trim();
                     if (t.isEmpty() || t.startsWith("#")) { out.add(line); continue; }
                     String[] cols = line.split(",");
-                    if (cols.length >= 1 && cols[0].trim().equals(userId)) {
-                        out.add(String.format("%s,%s,%s,%s", userId, username, password, role));
+                    if (cols.length >= 1 && cols[0].trim().equals(editingUserId)) {
+                        out.add(String.format("%s,%s,%s,%s", editingUserId, username, password, role));
                     } else {
                         out.add(line);
                     }
                 }
                 FileHandler.writeCsv("data/users.csv", out);
-                System.out.println("[AdminController] User updated successfully!");
+                showInfo("User updated successfully!");
                 editingUser = false;
                 editingUserId = null;
                 addUserBtn.setText("Add User");
             } else {
-                // Append new user
-                String line = String.format("%s,%s,%s,%s", userId, username, password, role);
+                // Generate new user ID
+                String newUserId = generateNextUserId();
+                String line = String.format("%s,%s,%s,%s", newUserId, username, password, role);
                 FileHandler.appendLine("data/users.csv", line);
-                System.out.println("[AdminController] User added successfully!");
+                showInfo("User added successfully! ID: " + newUserId);
             }
         } catch (IOException ioe) {
-            System.err.println("[AdminController] Failed to add/update user: " + ioe.getMessage());
+            showError("Failed to add/update user: " + ioe.getMessage());
         }
 
-        // Clear fields
-        userIdField.clear();
+        // Clear fields and reset editing state
         userUsernameField.clear();
         userPasswordField.clear();
-        userRoleField.clear();
+        userRoleField.setValue(null);
+        editingUser = false;
+        editingUserId = null;
+        addUserBtn.setText("Add User");
 
         // Reload table
         loadUsersData();
+    }
+
+    /**
+     * Generates the next user ID by finding the highest existing ID and incrementing.
+     */
+    private String generateNextUserId() throws IOException {
+        List<String> lines = FileHandler.readCsv("data/users.csv");
+        int maxId = 0;
+        
+        for (String line : lines) {
+            line = line.trim();
+            if (line.isEmpty() || line.startsWith("#")) continue;
+            String[] cols = line.split(",");
+            if (cols.length >= 1) {
+                String id = cols[0].trim();
+                // Extract numeric part from ID like "u01", "u02", etc.
+                if (id.startsWith("u")) {
+                    try {
+                        int num = Integer.parseInt(id.substring(1));
+                        if (num > maxId) maxId = num;
+                    } catch (NumberFormatException e) {
+                        // Skip invalid IDs
+                    }
+                }
+            }
+        }
+        
+        return String.format("u%02d", maxId + 1);
     }
 
 
@@ -712,39 +761,13 @@ public class AdminController {
                     if (idx >= 0 && idx < getTableView().getItems().size()) {
                         Customer c = getTableView().getItems().get(idx);
                         edit.setOnAction(ev -> {
-                            try {
-                                // Show dialogs to edit name, type and phone
-                                TextInputDialog nameDlg = new TextInputDialog(c.getName());
-                                nameDlg.setTitle("Edit Customer");
-                                nameDlg.setHeaderText("Edit Name for " + c.getCustomerId());
-                                nameDlg.setContentText("Name:");
-                                nameDlg.showAndWait().ifPresent(newName -> {
-                                    c.setName(newName);
-                                    // Type choice
-                                    ChoiceDialog<String> typeDlg = new ChoiceDialog<>(c.getType(), "REGULAR", "VIP");
-                                    typeDlg.setTitle("Edit Customer Type");
-                                    typeDlg.setHeaderText("Select type for " + c.getCustomerId());
-                                    typeDlg.setContentText("Type:");
-                                    typeDlg.showAndWait().ifPresent(newType -> {
-                                        // update via service (we will create a temporary customer object)
-                                        Customer temp;
-                                        if ("VIP".equalsIgnoreCase(newType)) temp = new VIPCustomer(c.getCustomerId(), c.getName());
-                                        else temp = new RegularCustomer(c.getCustomerId(), c.getName());
-                                        temp.setPhone(c.getPhone());
-                                        try {
-                                            // apply new name/phone/type
-                                            temp.setName(newName);
-                                            temp.setPhone(c.getPhone());
-                                            customerService.updateCustomer(temp);
-                                            loadCustomersData();
-                                        } catch (Exception ex) {
-                                            System.err.println("[AdminController] Failed to update customer: " + ex.getMessage());
-                                        }
-                                    });
-                                });
-                            } catch (Exception ex) {
-                                System.err.println("[AdminController] Error editing customer: " + ex.getMessage());
-                            }
+                            // Populate form fields for editing
+                            customerNameField.setText(c.getName());
+                            customerTypeField.setValue(c.getType());
+                            customerPhoneField.setText(c.getPhone() != null ? c.getPhone() : "");
+                            addCustomerBtn.setText("Update Customer");
+                            editingCustomer = true;
+                            editingCustomerId = c.getCustomerId();
                         });
                         del.setOnAction(ev -> {
                             try {
@@ -765,52 +788,67 @@ public class AdminController {
     }
 
     /**
-     * Handle adding a new customer via dialog inputs
+     * Handle adding/updating a customer via form inputs
      */
     @FXML
     private void handleAddCustomer(ActionEvent event) {
+        String name = customerNameField.getText().trim();
+        String type = customerTypeField.getValue();
+        String phone = customerPhoneField.getText().trim();
+        
+        if (name.isEmpty() || type == null || type.isEmpty()) {
+            showError("Customer Name and Type are required.");
+            return;
+        }
+        
         try {
-            // No ID dialog needed, auto-generated
-            TextInputDialog nameDlg = new TextInputDialog();
-            nameDlg.setTitle("Add Customer");
-            nameDlg.setHeaderText("New Customer Details");
-            nameDlg.setContentText("Name:");
+            if (customerService == null) customerService = new CustomerService();
             
-            nameDlg.showAndWait().ifPresent(name -> {
-                ChoiceDialog<String> typeDlg = new ChoiceDialog<>("REGULAR", "REGULAR", "VIP");
-                typeDlg.setTitle("Add Customer");
-                typeDlg.setHeaderText("Customer Type");
-                typeDlg.setContentText("Type:");
-                
-                typeDlg.showAndWait().ifPresent(type -> {
-                    TextInputDialog phoneDlg = new TextInputDialog();
-                    phoneDlg.setTitle("Add Customer");
-                    phoneDlg.setHeaderText("Phone Number (Optional)");
-                    phoneDlg.setContentText("Phone:");
-                    
-                    phoneDlg.showAndWait().ifPresent(phone -> {
-                        try {
-                            Customer c;
-                            // Pass null for ID to let service generate it
-                            if ("VIP".equalsIgnoreCase(type)) {
-                                c = new VIPCustomer(null, name);
-                            } else {
-                                c = new RegularCustomer(null, name);
-                            }
-                            c.setPhone(phone);
-                            
-                            if (customerService == null) customerService = new CustomerService();
-                            customerService.addCustomer(c);
-                            loadCustomersData();
-                            showInfo("Customer added successfully! ID: " + c.getCustomerId());
-                        } catch (Exception ex) {
-                            showError("Failed to add customer: " + ex.getMessage());
-                        }
-                    });
-                });
-            });
-        } catch (Exception e) {
-            showError("Error: " + e.getMessage());
+            if (editingCustomer && editingCustomerId != null) {
+                // Update existing customer
+                Customer existing = customerService.findCustomerById(editingCustomerId);
+                if (existing != null) {
+                    // Create new customer with same ID but updated info
+                    Customer updated;
+                    if ("VIP".equalsIgnoreCase(type)) {
+                        updated = new VIPCustomer(editingCustomerId, name);
+                    } else {
+                        updated = new RegularCustomer(editingCustomerId, name);
+                    }
+                    updated.setPhone(phone);
+                    customerService.updateCustomer(updated);
+                    showInfo("Customer updated successfully!");
+                    editingCustomer = false;
+                    editingCustomerId = null;
+                    addCustomerBtn.setText("Add Customer");
+                } else {
+                    showError("Customer not found for update.");
+                }
+            } else {
+                // Add new customer
+                Customer c;
+                if ("VIP".equalsIgnoreCase(type)) {
+                    c = new VIPCustomer(null, name);
+                } else {
+                    c = new RegularCustomer(null, name);
+                }
+                c.setPhone(phone);
+                customerService.addCustomer(c);
+                showInfo("Customer added successfully! ID: " + c.getCustomerId());
+            }
+            
+            // Clear form fields
+            customerNameField.clear();
+            customerTypeField.setValue(null);
+            customerPhoneField.clear();
+            editingCustomer = false;
+            editingCustomerId = null;
+            addCustomerBtn.setText("Add Customer");
+            
+            // Reload table
+            loadCustomersData();
+        } catch (Exception ex) {
+            showError("Failed to add/update customer: " + ex.getMessage());
         }
     }
     
@@ -839,21 +877,13 @@ public class AdminController {
             ((TableColumn<UserRow, String>) userRoleCol).setCellValueFactory(data -> new SimpleStringProperty(data.getValue().role));
             TableView<UserRow> ut = (TableView<UserRow>) usersTable;
             ut.setItems(obs);
-            // Selection listener to enable edit/update
-            ut.setOnMouseClicked(ev -> {
-                UserRow sel = ut.getSelectionModel().getSelectedItem();
-                if (sel != null) {
-                    userIdField.setText(sel.id);
-                    userUsernameField.setText(sel.username);
-                    userRoleField.setText(sel.role);
-                    addUserBtn.setText("Update User");
-                    editingUser = true;
-                    editingUserId = sel.id;
-                }
-            });
-            // add delete button to users action column
+            
+            // Add Edit/Delete buttons to users action column
             ((TableColumn<UserRow, String>) userActionCol).setCellFactory(col -> new TableCell<UserRow, String>() {
-                private final Button del = new Button("Delete");
+                private final Button editBtn = new Button("Edit");
+                private final Button delBtn = new Button("Delete");
+                private final HBox box = new HBox(5, editBtn, delBtn);
+                
                 @Override
                 protected void updateItem(String item, boolean empty) {
                     super.updateItem(item, empty);
@@ -861,7 +891,18 @@ public class AdminController {
                     int idx = getIndex();
                     if (idx >= 0 && idx < getTableView().getItems().size()) {
                         UserRow u = getTableView().getItems().get(idx);
-                        del.setOnAction(ev -> {
+                        
+                        editBtn.setOnAction(ev -> {
+                            // Populate form fields for editing
+                            userUsernameField.setText(u.username);
+                            userRoleField.setValue(u.role);
+                            userPasswordField.clear(); // Don't show password
+                            addUserBtn.setText("Update User");
+                            editingUser = true;
+                            editingUserId = u.id;
+                        });
+                        
+                        delBtn.setOnAction(ev -> {
                             try {
                                 List<String> lines = FileHandler.readCsv("data/users.csv");
                                 List<String> out = new ArrayList<>();
@@ -877,12 +918,12 @@ public class AdminController {
                                 }
                                 FileHandler.writeCsv("data/users.csv", out);
                                 loadUsersData();
-                                System.out.println("[AdminController] User deleted: " + u.id);
+                                showInfo("User deleted: " + u.id);
                             } catch (Exception ex) {
-                                System.err.println("[AdminController] Failed to delete user: " + ex.getMessage());
+                                showError("Failed to delete user: " + ex.getMessage());
                             }
                         });
-                        setGraphic(del);
+                        setGraphic(box);
                     }
                 }
             });
