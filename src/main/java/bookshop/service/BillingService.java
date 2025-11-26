@@ -3,15 +3,26 @@ package bookshop.service;
 import bookshop.exceptions.InvalidProductException;
 import bookshop.model.Customer;
 import bookshop.model.Product;
+import bookshop.strategy.BulkDiscountStrategy;
+import bookshop.strategy.DiscountStrategy;
+import bookshop.strategy.VIPDiscountStrategy;
+
+import java.util.ArrayList;
+import java.util.List;
 
 // Team Member D: Implement the core billing calculation logic.
 public class BillingService {
     private final ProductService productService;
     private final CustomerService customerService;
+    private final List<DiscountStrategy> strategies;
 
     public BillingService(ProductService productService, CustomerService customerService) {
         this.productService = productService;
         this.customerService = customerService;
+        this.strategies = new ArrayList<>();
+        // Add strategies in order of application
+        this.strategies.add(new BulkDiscountStrategy());
+        this.strategies.add(new VIPDiscountStrategy());
     }
 
     /**
@@ -35,31 +46,13 @@ public class BillingService {
             throw new InvalidProductException("Customer not found: " + customerId);
         }
 
-        // Determine the unit price based on quantity and discount rules
-        double unitPrice = getUnitPrice(product, quantity);
+        double currentTotal = 0.0;
 
-        // Calculate subtotal
-        double subtotal = quantity * unitPrice;
-
-        // Apply customer-specific discount
-        double finalTotal = customer.calculateFinalPrice(subtotal);
-
-        return finalTotal;
-    }
-
-    /**
-     * Get the unit price for a product based on quantity and discount rules.
-     * @param product The product.
-     * @param quantity The quantity.
-     * @return The unit price.
-     */
-    private double getUnitPrice(Product product, int quantity) {
-        double unitPrice = product.getRealPrice(); // Default to real price
-        for (var entry : product.getDiscountRules().entrySet()) {
-            if (quantity >= entry.getKey()) {
-                unitPrice = entry.getValue();
-            }
+        // Apply strategies
+        for (DiscountStrategy strategy : strategies) {
+            currentTotal = strategy.applyDiscount(currentTotal, product, quantity, customer);
         }
-        return unitPrice;
+
+        return currentTotal;
     }
 }

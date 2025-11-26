@@ -12,7 +12,11 @@ module bookshop {
 
     // Open the main package to JavaFX and testing
     opens bookshop;
+    
+    // Open service package for testing
+    opens bookshop.service;
 
     // Export the main package
     exports bookshop;
+    exports bookshop.service;
 }
