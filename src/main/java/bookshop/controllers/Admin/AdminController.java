@@ -54,8 +54,7 @@ public class AdminController {
     @FXML
     private Button productsBtn;
 
-    @FXML
-    private Button discountsBtn;
+
 
     @FXML
     private Button customersBtn;
@@ -115,31 +114,6 @@ public class AdminController {
 
     @FXML
     private TextField discountValueField;
-
-    @FXML
-    private TextField discountMinAmountField;
-
-    @FXML
-    private Button addDiscountBtn;
-
-    @FXML
-    private TableView<?> discountsTable;
-
-    @FXML
-    private TableColumn<?, ?> discountCodeCol;
-
-    @FXML
-    private TableColumn<?, ?> discountTypeCol;
-
-    @FXML
-    private TableColumn<?, ?> discountValueCol;
-
-    @FXML
-    private TableColumn<?, ?> discountMinCol;
-
-    @FXML
-    private TableColumn<?, ?> discountActionCol;
-    //</editor-fold>
 
     //<editor-fold desc="FXML Annotations - Customers Tab">
     @FXML
@@ -238,7 +212,7 @@ public class AdminController {
             }
         });
         loadProductsData();
-        loadDiscountsData();
+
         loadCustomersData();
         loadUsersData();
     }
@@ -258,14 +232,7 @@ public class AdminController {
         contentTabPane.getSelectionModel().selectFirst(); // Select Products tab
     }
 
-    /**
-     * Handles clicking on the Discounts menu button.
-     */
-    @FXML
-    private void handleDiscountsMenu(ActionEvent event) {
-        System.out.println("[AdminController] Discounts menu clicked");
-        contentTabPane.getSelectionModel().select(1); // Select Discounts tab
-    }
+
 
     /**
      * Handles clicking on the Customers menu button.
@@ -273,7 +240,7 @@ public class AdminController {
     @FXML
     private void handleCustomersMenu(ActionEvent event) {
         System.out.println("[AdminController] Customers menu clicked");
-        contentTabPane.getSelectionModel().select(2); // Select Customers tab
+        contentTabPane.getSelectionModel().select(1); // Select Customers tab
     }
 
     /**
@@ -282,7 +249,7 @@ public class AdminController {
     @FXML
     private void handleUsersMenu(ActionEvent event) {
         System.out.println("[AdminController] Users menu clicked");
-        contentTabPane.getSelectionModel().select(3); // Select Users tab
+        contentTabPane.getSelectionModel().select(2); // Select Users tab
     }
 
 
@@ -369,82 +336,10 @@ public class AdminController {
         loadProductsData();
     }
 
-    // --- Discounts Tab Handlers ---
 
-    /**
-     * Handles adding a new discount.
-     */
-    @FXML
-    private void handleAddDiscount(ActionEvent event) {
-        if (productService == null) {
-            try {
-                productService = new ProductService();
-            } catch (IOException e) {
-                showError("Failed to load products: " + e.getMessage());
-                return;
-            }
-        }
         
-        // Get all product IDs
-        List<String> productIds = new ArrayList<>();
-        for (Product p : productService.getAllProducts()) {
-            productIds.add(p.getProductId() + " - " + p.getName());
-        }
-        
-        if (productIds.isEmpty()) {
-            showError("No products available. Please add products first.");
-            return;
-        }
-        
-        // Step 1: Select product
-        ChoiceDialog<String> productDlg = new ChoiceDialog<>(productIds.get(0), productIds);
-        productDlg.setTitle("Add Bulk Discount");
-        productDlg.setHeaderText("Select Product for Discount");
-        productDlg.setContentText("Product:");
-        
-        productDlg.showAndWait().ifPresent(selectedProd -> {
-            String productId = selectedProd.split(" - ")[0];
-            
-            // Step 2: Enter quantity threshold
-            TextInputDialog qtyDlg = new TextInputDialog();
-            qtyDlg.setTitle("Add Bulk Discount");
-            qtyDlg.setHeaderText("Quantity Threshold");
-            qtyDlg.setContentText("Min Quantity for Discount:");
-            
-            qtyDlg.showAndWait().ifPresent(qtyStr -> {
-                try {
-                    int quantity = Integer.parseInt(qtyStr);
-                    
-                    // Step 3: Enter discounted price
-                    TextInputDialog priceDlg = new TextInputDialog();
-                    priceDlg.setTitle("Add Bulk Discount");
-                    priceDlg.setHeaderText("Discounted Price");
-                    priceDlg.setContentText("Price per unit when buying " + quantity + "+ items:");
-                    
-                    priceDlg.showAndWait().ifPresent(priceStr -> {
-                        try {
-                            double price = Double.parseDouble(priceStr);
-                            
-                            Product prod = productService.findProductById(productId);
-                            if (prod != null) {
-                                prod.setDiscount(quantity, price);
-                                productService.saveAllProducts();
-                                showInfo("Discount added successfully!");
-                                loadProductsData();
-                                loadDiscountsData();
-                            }
-                        } catch (NumberFormatException ex) {
-                            showError("Invalid price format.");
-                        } catch (IOException ex) {
-                            showError("Failed to save discount: " + ex.getMessage());
-                        }
-                    });
-                } catch (NumberFormatException ex) {
-                    showError("Invalid quantity format.");
-                }
-            });
-        });
-    }
+
+
 
     // --- Users Tab Handlers ---
 
@@ -533,6 +428,9 @@ public class AdminController {
     /**
      * Loads products data from CSV into the products table.
      */
+    /**
+     * Loads products data from CSV into the products table.
+     */
     private void loadProductsData() {
         System.out.println("[AdminController] Loading products data...");
         try {
@@ -548,9 +446,12 @@ public class AdminController {
             productQtyCol.setCellValueFactory(cell -> new SimpleStringProperty(String.valueOf(cell.getValue().getQuantity())));
             productsTable.setItems(obs);
 
-            // Add action buttons (Delete) to action column
+            // Add action buttons (Discount / Delete) to action column
             productActionCol.setCellFactory(col -> new TableCell<Product, String>() {
-                private final Button del = new Button("Delete");
+                private final Button discountBtn = new Button("Discount");
+                private final Button delBtn = new Button("Delete");
+                private final HBox box = new HBox(5, discountBtn, delBtn);
+
                 @Override
                 protected void updateItem(String item, boolean empty) {
                     super.updateItem(item, empty);
@@ -561,9 +462,48 @@ public class AdminController {
                     int idx = getIndex();
                     if (idx >= 0 && idx < getTableView().getItems().size()) {
                         Product p = getTableView().getItems().get(idx);
-                        del.setOnAction(ev -> {
+                        
+                        // Style buttons
+                        discountBtn.setStyle("-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-size: 10px;");
+                        delBtn.setStyle("-fx-background-color: #F44336; -fx-text-fill: white; -fx-font-size: 10px;");
+
+                        // Discount Button Action
+                        discountBtn.setOnAction(ev -> {
+                            // Open Discount Dialog for this product
+                            TextInputDialog qtyDlg = new TextInputDialog();
+                            qtyDlg.setTitle("Manage Discount");
+                            qtyDlg.setHeaderText("Add Discount for " + p.getName());
+                            qtyDlg.setContentText("Min Quantity for Discount:");
+                            
+                            qtyDlg.showAndWait().ifPresent(qtyStr -> {
+                                try {
+                                    int quantity = Integer.parseInt(qtyStr);
+                                    
+                                    TextInputDialog priceDlg = new TextInputDialog();
+                                    priceDlg.setTitle("Manage Discount");
+                                    priceDlg.setHeaderText("Discounted Price");
+                                    priceDlg.setContentText("Price per unit when buying " + quantity + "+ items:");
+                                    
+                                    priceDlg.showAndWait().ifPresent(priceStr -> {
+                                        try {
+                                            double price = Double.parseDouble(priceStr);
+                                            p.setDiscount(quantity, price);
+                                            productService.saveAllProducts();
+                                            showInfo("Discount added to " + p.getName());
+                                            loadProductsData(); // Refresh to potentially show discount indicator
+                                        } catch (Exception ex) {
+                                            showError("Invalid price or save failed: " + ex.getMessage());
+                                        }
+                                    });
+                                } catch (NumberFormatException ex) {
+                                    showError("Invalid quantity format.");
+                                }
+                            });
+                        });
+
+                        // Delete Button Action
+                        delBtn.setOnAction(ev -> {
                             try {
-                                // Use ProductService to delete and persist
                                 if (productService == null) productService = new ProductService();
                                 productService.deleteProduct(p.getProductId());
                                 loadProductsData();
@@ -574,7 +514,8 @@ public class AdminController {
                                 a.showAndWait();
                             }
                         });
-                        setGraphic(del);
+                        
+                        setGraphic(box);
                     }
                 }
             });
@@ -583,76 +524,7 @@ public class AdminController {
         }
     }
 
-    /**
-     * Loads discounts data from CSV into the discounts table.
-     */
-    private void loadDiscountsData() {
-        System.out.println("[AdminController] Loading discounts data...");
-        try {
-            if (productService == null) {
-                productService = new ProductService();
-            }
-            List<Product> products = productService.getAllProducts();
-            // Flatten discount rules into simple rows
-            List<DiscountRow> rows = new ArrayList<>();
-            for (Product p : products) {
-                p.getDiscountRules().forEach((qty, price) -> {
-                    String productDisplay = p.getProductId() + " - " + p.getName();
-                    rows.add(new DiscountRow(productDisplay, String.valueOf(qty), String.format("%.2f", price), p.getProductId()));
-                });
-            }
-            ObservableList<DiscountRow> obs = FXCollections.observableArrayList(rows);
-            // setup columns (map DiscountRow properties to columns)
-            @SuppressWarnings("unchecked")
-            TableView<DiscountRow> dt = (TableView<DiscountRow>) discountsTable;
-            ((TableColumn<DiscountRow, String>) discountCodeCol).setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getCode()));
-            ((TableColumn<DiscountRow, String>) discountTypeCol).setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getType()));
-            ((TableColumn<DiscountRow, String>) discountValueCol).setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getValue()));
-            ((TableColumn<DiscountRow, String>) discountMinCol).setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getMin()));
-            
-            // Add delete button
-            @SuppressWarnings("unchecked")
-            TableColumn<DiscountRow, String> actionCol = (TableColumn<DiscountRow, String>) discountActionCol;
-            actionCol.setCellFactory(col -> new TableCell<DiscountRow, String>() {
-                private final Button delBtn = new Button("Delete");
-                @Override
-                protected void updateItem(String item, boolean empty) {
-                    super.updateItem(item, empty);
-                    if (empty) { setGraphic(null); return; }
-                    DiscountRow row = getTableView().getItems().get(getIndex());
-                    delBtn.setStyle("-fx-padding: 5; -fx-font-size: 10; -fx-background-color: #cc0000; -fx-text-fill: white;");
-                    delBtn.setOnAction(ev -> {
-                        try {
-                            ProductService ps = new ProductService();
-                            Product p = ps.findProductById(row.getProductId());
-                            if (p != null) {
-                                int qty = Integer.parseInt(row.getType());
-                                p.removeDiscount(qty);
-                                ps.saveAllProducts();
-                                loadDiscountsData();
-                                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                                alert.setTitle("Success");
-                                alert.setHeaderText(null);
-                                alert.setContentText("Discount deleted successfully!");
-                                alert.showAndWait();
-                            }
-                        } catch (Exception ex) {
-                            Alert alert = new Alert(Alert.AlertType.ERROR);
-                            alert.setTitle("Error");
-                            alert.setHeaderText(null);
-                            alert.setContentText("Failed to delete discount: " + ex.getMessage());
-                            alert.showAndWait();
-                        }
-                    });
-                    setGraphic(delBtn);
-                }
-            });
-            
-            dt.setItems(obs);
-        } catch (Exception e) {
-            System.err.println("[AdminController] Error loading discounts: " + e.getMessage());
-        }
-    }
+
 
     /**
      * Loads customers data from CSV into the customers table.

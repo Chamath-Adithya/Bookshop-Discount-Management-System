@@ -1,5 +1,5 @@
 # user_id,username,password,role
-u01,admin,admin123,MANAGER
+u01,admin,ad12,MANAGER
 u02,john,john456,WORKER
 u03,sarah,sarah789,WORKER
 u04,yasaru,yasaru123,WORKER
