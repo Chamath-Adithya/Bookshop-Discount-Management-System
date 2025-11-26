@@ -146,3 +146,11 @@
 .table-row-cell:selected {
     -fx-background-color: rgba(212, 175, 55, 0.1);
 }
+
+/* Hide Tab Headers */
+.hidden-header-tab-pane>.tab-header-area {
+    -fx-visible: false;
+    -fx-pref-height: 0;
+    -fx-max-height: 0;
+    -fx-padding: 0;
+}
