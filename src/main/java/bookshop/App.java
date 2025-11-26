@@ -15,6 +15,7 @@ public class App extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/FXML/RoleSelection.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         stage.setScene(scene);
+        stage.setTitle("Bookshop Management System");
         stage.show();
     }
 

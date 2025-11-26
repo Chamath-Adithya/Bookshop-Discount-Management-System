@@ -1,27 +1,24 @@
 /* MainTheme.css - Luxe Minimalist */
+/* Color Palette:
+   Primary (Deep Charcoal): #1a1a1a
+   Secondary (Gold/Brass): #d4af37
+   Accent (White): #ffffff
+   Background (Light Grey): #f4f4f4
+*/
+
 .root {
-    -fx-primary-color: #1a1a1a;
-    /* Deep Charcoal */
-    -fx-secondary-color: #d4af37;
-    /* Gold/Brass */
-    -fx-accent-color: #ffffff;
-    /* White */
-    -fx-bg-color: #f4f4f4;
-    /* Light Grey */
     -fx-text-fill: #333333;
     -fx-font-family: 'Segoe UI', sans-serif;
-
-    /* -fx-background-color: -fx-bg-color;  <-- REMOVED to prevent StackOverflow */
 }
 
 .app-background {
-    -fx-background-color: -fx-bg-color;
+    -fx-background-color: #f4f4f4;
 }
 
 /* Buttons */
 .button {
-    -fx-background-color: -fx-primary-color;
-    -fx-text-fill: -fx-secondary-color;
+    -fx-background-color: #1a1a1a;
+    -fx-text-fill: #d4af37;
     -fx-font-size: 14px;
     -fx-font-weight: bold;
     -fx-background-radius: 8;
@@ -31,20 +28,20 @@
 }
 
 .button:hover {
-    -fx-background-color: derive(-fx-primary-color, 10%);
+    -fx-background-color: #2a2a2a;
     -fx-effect: dropshadow(three-pass-box, rgba(212, 175, 55, 0.4), 8, 0, 0, 2);
 }
 
 .button:pressed {
-    -fx-background-color: derive(-fx-primary-color, -10%);
+    -fx-background-color: #0a0a0a;
 }
 
 /* Secondary Button (Outline) */
 .button-secondary {
     -fx-background-color: transparent;
-    -fx-border-color: -fx-primary-color;
+    -fx-border-color: #1a1a1a;
     -fx-border-width: 2;
-    -fx-text-fill: -fx-primary-color;
+    -fx-text-fill: #1a1a1a;
 }
 
 .button-secondary:hover {
@@ -64,19 +61,19 @@
 
 .text-field:focused,
 .password-field:focused {
-    -fx-border-color: -fx-secondary-color;
+    -fx-border-color: #d4af37;
     -fx-effect: dropshadow(three-pass-box, rgba(212, 175, 55, 0.2), 5, 0, 0, 0);
 }
 
 /* Labels & Text */
 .label {
-    -fx-text-fill: -fx-primary-color;
+    -fx-text-fill: #1a1a1a;
 }
 
 .header-text {
     -fx-font-size: 24px;
     -fx-font-weight: bold;
-    -fx-fill: -fx-primary-color;
+    -fx-fill: #1a1a1a;
 }
 
 .subheader-text {
@@ -94,7 +91,7 @@
 
 /* Sidebar */
 .sidebar {
-    -fx-background-color: -fx-primary-color;
+    -fx-background-color: #1a1a1a;
 }
 
 .sidebar-button {
@@ -114,8 +111,8 @@
 
 .sidebar-button:selected {
     -fx-background-color: rgba(212, 175, 55, 0.1);
-    -fx-text-fill: -fx-secondary-color;
-    -fx-border-color: -fx-secondary-color;
+    -fx-text-fill: #d4af37;
+    -fx-border-color: #d4af37;
     -fx-border-width: 0 0 0 4;
 }
 
@@ -127,12 +124,12 @@
 }
 
 .table-view .column-header-background {
-    -fx-background-color: -fx-primary-color;
+    -fx-background-color: #1a1a1a;
     -fx-background-radius: 5 5 0 0;
 }
 
 .table-view .column-header .label {
-    -fx-text-fill: -fx-secondary-color;
+    -fx-text-fill: #d4af37;
     -fx-font-weight: bold;
 }
 

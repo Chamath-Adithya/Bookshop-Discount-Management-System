@@ -15,7 +15,8 @@
 
 <BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" 
             fx:controller="bookshop.controllers.User.UserController"
-            stylesheets="@../../Styles/MainTheme.css">
+            stylesheets="@../../Styles/MainTheme.css"
+            styleClass="app-background">
 
     <!-- Top Bar -->
     <top>
