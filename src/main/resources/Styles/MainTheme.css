@@ -1,19 +1,17 @@
 /* MainTheme.css - Luxe Minimalist */
-* {
+.root {
     -fx-primary-color: #1a1a1a;
     /* Deep Charcoal */
     -fx-secondary-color: #d4af37;
     /* Gold/Brass */
     -fx-accent-color: #ffffff;
     /* White */
-    -fx-background-color: #f4f4f4;
+    -fx-bg-color: #f4f4f4;
     /* Light Grey */
     -fx-text-fill: #333333;
     -fx-font-family: 'Segoe UI', sans-serif;
-}
 
-.root {
-    -fx-background-color: -fx-background-color;
+    -fx-background-color: -fx-bg-color;
 }
 
 /* Buttons */

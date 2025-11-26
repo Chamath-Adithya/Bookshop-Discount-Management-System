@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" 
+            fx:controller="bookshop.controllers.Admin.AdminController"
+            stylesheets="@../../Styles/MainTheme.css">
+
+    <!-- Sidebar -->
+    <left>
+        <VBox styleClass="sidebar" prefWidth="250" spacing="0">
+            <padding>
+                <Insets top="20" bottom="20"/>
+            </padding>
+            
+            <VBox alignment="CENTER_LEFT" spacing="5">
+                <padding>
+                    <Insets left="20" right="20" bottom="30"/>
+                </padding>
+                <Text text="Bookshop" style="-fx-fill: white; -fx-font-size: 20px; -fx-font-weight: bold;"/>
+                <Text text="Manager Portal" style="-fx-fill: #888888; -fx-font-size: 14px;"/>
+            </VBox>
+
+            <Button fx:id="productsBtn" text="Products" onAction="#handleProductsMenu" styleClass="sidebar-button" maxWidth="Infinity"/>
+            <Button fx:id="discountsBtn" text="Discounts" onAction="#handleDiscountsMenu" styleClass="sidebar-button" maxWidth="Infinity"/>
+            <Button fx:id="customersBtn" text="Customers" onAction="#handleCustomersMenu" styleClass="sidebar-button" maxWidth="Infinity"/>
+            <Button fx:id="usersBtn" text="Users" onAction="#handleUsersMenu" styleClass="sidebar-button" maxWidth="Infinity"/>
+            <Button fx:id="reportsBtn" text="Reports" onAction="#handleReportsMenu" styleClass="sidebar-button" maxWidth="Infinity"/>
+            
+            <VBox VBox.vgrow="ALWAYS"/>
+            
+            <VBox spacing="10">
+                <padding>
+                    <Insets left="20" right="20"/>
+                </padding>
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Text fx:id="adminNameText" text="Admin" style="-fx-fill: white;"/>
+                </HBox>
+                <Button fx:id="logoutButton" text="Logout" onAction="#handleLogout" styleClass="button-secondary" maxWidth="Infinity" style="-fx-border-color: #444; -fx-text-fill: #aaa;"/>
+            </VBox>
+        </VBox>
+    </left>
+
+    <!-- Content Area -->
+    <center>
+        <TabPane fx:id="contentTabPane" tabClosingPolicy="UNAVAILABLE" style="-fx-background-color: -fx-background-color;">
+            
+            <!-- Products Tab -->
+            <Tab text="Products">
+                <VBox spacing="20" style="-fx-padding: 30;">
+                    <Text text="Product Management" styleClass="header-text"/>
+                    
+                    <!-- Add Product Form -->
+                    <HBox spacing="15" alignment="CENTER_LEFT" styleClass="card">
+                        <TextField fx:id="productIdField" promptText="ID" prefWidth="80" editable="false"/>
+                        <TextField fx:id="productNameField" promptText="Product Name" HBox.hgrow="ALWAYS"/>
+                        <TextField fx:id="productPriceField" promptText="Price" prefWidth="100"/>
+                        <TextField fx:id="productQtyField" promptText="Qty" prefWidth="80"/>
+                        <Button fx:id="addProductBtn" text="Add Product" onAction="#handleAddProduct"/>
+                    </HBox>
+                    
+                    <!-- Products Table -->
+                    <TableView fx:id="productsTable" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="productIdCol" text="ID" prefWidth="80"/>
+                            <TableColumn fx:id="productNameCol" text="Name" prefWidth="250"/>
+                            <TableColumn fx:id="productPriceCol" text="Price" prefWidth="100"/>
+                            <TableColumn fx:id="productQtyCol" text="Quantity" prefWidth="100"/>
+                            <TableColumn fx:id="productActionCol" text="Action" prefWidth="100"/>
+                        </columns>
+                        <columnResizePolicy>
+                            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                        </columnResizePolicy>
+                    </TableView>
+                </VBox>
+            </Tab>
+
+            <!-- Discounts Tab -->
+            <Tab text="Discounts">
+                <VBox spacing="20" style="-fx-padding: 30;">
+                    <Text text="Discount Management" styleClass="header-text"/>
+                    
+                    <HBox spacing="15" alignment="CENTER_LEFT" styleClass="card">
+                        <Button fx:id="addDiscountBtn" text="Add New Bulk Discount" onAction="#handleAddDiscount"/>
+                        <!-- Hidden fields to satisfy controller injection requirements if any, though logic uses dialogs -->
+                        <TextField fx:id="discountCodeField" visible="false" managed="false"/>
+                        <TextField fx:id="discountTypeField" visible="false" managed="false"/>
+                        <TextField fx:id="discountValueField" visible="false" managed="false"/>
+                        <TextField fx:id="discountMinAmountField" visible="false" managed="false"/>
+                    </HBox>
+                    
+                    <TableView fx:id="discountsTable" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="discountCodeCol" text="Product" prefWidth="200"/>
+                            <TableColumn fx:id="discountTypeCol" text="Min Qty" prefWidth="100"/>
+                            <TableColumn fx:id="discountValueCol" text="Discounted Price" prefWidth="150"/>
+                            <TableColumn fx:id="discountMinCol" text="Extra Info" prefWidth="100"/>
+                            <TableColumn fx:id="discountActionCol" text="Action" prefWidth="100"/>
+                        </columns>
+                        <columnResizePolicy>
+                            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                        </columnResizePolicy>
+                    </TableView>
+                </VBox>
+            </Tab>
+
+            <!-- Customers Tab -->
+            <Tab text="Customers">
+                <VBox spacing="20" style="-fx-padding: 30;">
+                    <Text text="Customer Management" styleClass="header-text"/>
+                    
+                    <HBox spacing="15" alignment="CENTER_LEFT" styleClass="card">
+                        <Button text="Add New Customer" onAction="#handleAddCustomer"/>
+                    </HBox>
+                    
+                    <TableView fx:id="customersTable" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="customerIdCol" text="ID" prefWidth="80"/>
+                            <TableColumn fx:id="customerNameCol" text="Name" prefWidth="200"/>
+                            <TableColumn fx:id="customerTypeCol" text="Type" prefWidth="100"/>
+                            <TableColumn fx:id="customerPhoneCol" text="Phone" prefWidth="150"/>
+                            <TableColumn fx:id="customerActionCol" text="Action" prefWidth="150"/>
+                        </columns>
+                        <columnResizePolicy>
+                            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                        </columnResizePolicy>
+                    </TableView>
+                </VBox>
+            </Tab>
+
+            <!-- Users Tab -->
+            <Tab text="Users">
+                <VBox spacing="20" style="-fx-padding: 30;">
+                    <Text text="User Management" styleClass="header-text"/>
+                    
+                    <HBox spacing="15" alignment="CENTER_LEFT" styleClass="card">
+                        <TextField fx:id="userIdField" promptText="User ID" prefWidth="100"/>
+                        <TextField fx:id="userUsernameField" promptText="Username" prefWidth="150"/>
+                        <PasswordField fx:id="userPasswordField" promptText="Password" prefWidth="150"/>
+                        <TextField fx:id="userRoleField" promptText="Role (MANAGER/WORKER)" prefWidth="150"/>
+                        <Button fx:id="addUserBtn" text="Add User" onAction="#handleAddUser"/>
+                    </HBox>
+                    
+                    <TableView fx:id="usersTable" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="userIdCol" text="ID" prefWidth="80"/>
+                            <TableColumn fx:id="userUsernameCol" text="Username" prefWidth="150"/>
+                            <TableColumn fx:id="userRoleCol" text="Role" prefWidth="150"/>
+                            <TableColumn fx:id="userActionCol" text="Action" prefWidth="100"/>
+                        </columns>
+                        <columnResizePolicy>
+                            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                        </columnResizePolicy>
+                    </TableView>
+                </VBox>
+            </Tab>
+
+            <!-- Reports Tab -->
+            <Tab text="Reports">
+                <VBox spacing="20" style="-fx-padding: 30;">
+                    <Text text="Reports &amp; Analytics" styleClass="header-text"/>
+                    
+                    <HBox spacing="15">
+                        <Button fx:id="salesReportBtn" text="Sales Report" onAction="#handleSalesReport" prefWidth="150"/>
+                        <Button fx:id="inventoryReportBtn" text="Inventory Report" onAction="#handleInventoryReport" prefWidth="150"/>
+                        <Button fx:id="customersReportBtn" text="Customers Report" onAction="#handleCustomersReport" prefWidth="150"/>
+                    </HBox>
+                    
+                    <TextArea fx:id="reportTextArea" VBox.vgrow="ALWAYS" editable="false" style="-fx-font-family: 'Consolas', monospace;"/>
+                </VBox>
+            </Tab>
+
+        </TabPane>
+    </center>
+</BorderPane>
