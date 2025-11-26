@@ -1,0 +1,149 @@
+/* MainTheme.css - Luxe Minimalist */
+* {
+    -fx-primary-color: #1a1a1a;
+    /* Deep Charcoal */
+    -fx-secondary-color: #d4af37;
+    /* Gold/Brass */
+    -fx-accent-color: #ffffff;
+    /* White */
+    -fx-background-color: #f4f4f4;
+    /* Light Grey */
+    -fx-text-fill: #333333;
+    -fx-font-family: 'Segoe UI', sans-serif;
+}
+
+.root {
+    -fx-background-color: -fx-background-color;
+}
+
+/* Buttons */
+.button {
+    -fx-background-color: -fx-primary-color;
+    -fx-text-fill: -fx-secondary-color;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+    -fx-padding: 10 20;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.2), 5, 0, 0, 2);
+}
+
+.button:hover {
+    -fx-background-color: derive(-fx-primary-color, 10%);
+    -fx-effect: dropshadow(three-pass-box, rgba(212, 175, 55, 0.4), 8, 0, 0, 2);
+}
+
+.button:pressed {
+    -fx-background-color: derive(-fx-primary-color, -10%);
+}
+
+/* Secondary Button (Outline) */
+.button-secondary {
+    -fx-background-color: transparent;
+    -fx-border-color: -fx-primary-color;
+    -fx-border-width: 2;
+    -fx-text-fill: -fx-primary-color;
+}
+
+.button-secondary:hover {
+    -fx-background-color: rgba(26, 26, 26, 0.1);
+}
+
+/* Text Fields */
+.text-field,
+.password-field {
+    -fx-background-color: white;
+    -fx-border-color: #cccccc;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-padding: 8;
+    -fx-font-size: 14px;
+}
+
+.text-field:focused,
+.password-field:focused {
+    -fx-border-color: -fx-secondary-color;
+    -fx-effect: dropshadow(three-pass-box, rgba(212, 175, 55, 0.2), 5, 0, 0, 0);
+}
+
+/* Labels & Text */
+.label {
+    -fx-text-fill: -fx-primary-color;
+}
+
+.header-text {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-fill: -fx-primary-color;
+}
+
+.subheader-text {
+    -fx-font-size: 18px;
+    -fx-fill: #666666;
+}
+
+/* Cards/Containers */
+.card {
+    -fx-background-color: white;
+    -fx-background-radius: 15;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.1), 10, 0, 0, 5);
+    -fx-padding: 20;
+}
+
+/* Sidebar */
+.sidebar {
+    -fx-background-color: -fx-primary-color;
+}
+
+.sidebar-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #aaaaaa;
+    -fx-alignment: CENTER_LEFT;
+    -fx-font-size: 16px;
+    -fx-padding: 15 20;
+    -fx-background-radius: 0;
+    -fx-effect: null;
+}
+
+.sidebar-button:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.05);
+    -fx-text-fill: white;
+}
+
+.sidebar-button:selected {
+    -fx-background-color: rgba(212, 175, 55, 0.1);
+    -fx-text-fill: -fx-secondary-color;
+    -fx-border-color: -fx-secondary-color;
+    -fx-border-width: 0 0 0 4;
+}
+
+/* TableView */
+.table-view {
+    -fx-background-color: white;
+    -fx-table-cell-border-color: transparent;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.05), 5, 0, 0, 1);
+}
+
+.table-view .column-header-background {
+    -fx-background-color: -fx-primary-color;
+    -fx-background-radius: 5 5 0 0;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: -fx-secondary-color;
+    -fx-font-weight: bold;
+}
+
+.table-row-cell {
+    -fx-background-color: white;
+    -fx-border-color: #eeeeee;
+    -fx-border-width: 0 0 1 0;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: #fafafa;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: rgba(212, 175, 55, 0.1);
+}
