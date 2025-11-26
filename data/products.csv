@@ -1,4 +1,4 @@
 product_id,product_name,real_price,discounts,quantity
-3,Pencil,20.00,"5:61.0",80
+3,Pencil,20.00,"10:45.0;5:61.0;7:50.0;15:40.0",80
 4,cat,1000.00,"",5
 p05,dog,1000.00,"",50
