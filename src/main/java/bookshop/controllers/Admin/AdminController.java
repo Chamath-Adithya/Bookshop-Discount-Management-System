@@ -28,6 +28,19 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.Label;
+import javafx.scene.layout.GridPane;
+import javafx.geometry.Insets;
+import java.util.Map;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Stage;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
@@ -100,6 +113,9 @@ public class AdminController {
 
     @FXML
     private TableColumn<Product, String> productQtyCol;
+
+    @FXML
+    private TableColumn<Product, String> productDiscountCol;
 
     @FXML
     private TableColumn<Product, String> productActionCol;
@@ -439,11 +455,27 @@ public class AdminController {
             }
             List<Product> list = productService.getAllProducts();
             ObservableList<Product> obs = FXCollections.observableArrayList(list);
-            // Setup columns if not already
+            
+            // Setup columns
             productIdCol.setCellValueFactory(new PropertyValueFactory<>("productId"));
             productNameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
             productPriceCol.setCellValueFactory(new PropertyValueFactory<>("realPrice"));
             productQtyCol.setCellValueFactory(cell -> new SimpleStringProperty(String.valueOf(cell.getValue().getQuantity())));
+            
+            // Active Discount Column
+            productDiscountCol.setCellValueFactory(cell -> {
+                Map<Integer, Double> rules = cell.getValue().getDiscountRules();
+                if (rules.isEmpty()) return new SimpleStringProperty("-");
+                if (rules.size() == 1) {
+                    // Display single rule
+                    Map.Entry<Integer, Double> rule = rules.entrySet().iterator().next();
+                    return new SimpleStringProperty("Buy " + rule.getKey() + "+ @ " + String.format("%.2f", rule.getValue()));
+                } else {
+                    // Display count of rules
+                    return new SimpleStringProperty(rules.size() + " rules");
+                }
+            });
+
             productsTable.setItems(obs);
 
             // Add action buttons (Discount / Delete) to action column
@@ -463,43 +495,21 @@ public class AdminController {
                     if (idx >= 0 && idx < getTableView().getItems().size()) {
                         Product p = getTableView().getItems().get(idx);
                         
+                        // Check if discount exists
+                        boolean hasDiscount = !p.getDiscountRules().isEmpty();
+                        
                         // Style buttons
-                        discountBtn.setStyle("-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-size: 10px;");
+                        if (hasDiscount) {
+                            discountBtn.setText("Edit Deal");
+                            discountBtn.setStyle("-fx-background-color: #FF9800; -fx-text-fill: white; -fx-font-size: 10px;");
+                        } else {
+                            discountBtn.setText("Add Deal");
+                            discountBtn.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 10px;");
+                        }
                         delBtn.setStyle("-fx-background-color: #F44336; -fx-text-fill: white; -fx-font-size: 10px;");
 
-                        // Discount Button Action
-                        discountBtn.setOnAction(ev -> {
-                            // Open Discount Dialog for this product
-                            TextInputDialog qtyDlg = new TextInputDialog();
-                            qtyDlg.setTitle("Manage Discount");
-                            qtyDlg.setHeaderText("Add Discount for " + p.getName());
-                            qtyDlg.setContentText("Min Quantity for Discount:");
-                            
-                            qtyDlg.showAndWait().ifPresent(qtyStr -> {
-                                try {
-                                    int quantity = Integer.parseInt(qtyStr);
-                                    
-                                    TextInputDialog priceDlg = new TextInputDialog();
-                                    priceDlg.setTitle("Manage Discount");
-                                    priceDlg.setHeaderText("Discounted Price");
-                                    priceDlg.setContentText("Price per unit when buying " + quantity + "+ items:");
-                                    
-                                    priceDlg.showAndWait().ifPresent(priceStr -> {
-                                        try {
-                                            double price = Double.parseDouble(priceStr);
-                                            p.setDiscount(quantity, price);
-                                            productService.saveAllProducts();
-                                            showInfo("Discount added to " + p.getName());
-                                            loadProductsData(); // Refresh to potentially show discount indicator
-                                        } catch (Exception ex) {
-                                            showError("Invalid price or save failed: " + ex.getMessage());
-                                        }
-                                    });
-                                } catch (NumberFormatException ex) {
-                                    showError("Invalid quantity format.");
-                                }
-                            });
-                        });
+                        // Discount Button Action - Custom Dialog
+                        discountBtn.setOnAction(ev -> showDiscountDialog(p));
 
                         // Delete Button Action
                         delBtn.setOnAction(ev -> {
@@ -522,6 +532,135 @@ public class AdminController {
         } catch (Exception e) {
             System.err.println("[AdminController] Error loading products: " + e.getMessage());
         }
+    }
+
+    /**
+     * Shows a custom dialog to manage discounts for a product.
+     * Supports multiple discount tiers.
+     */
+    private void showDiscountDialog(Product p) {
+        Dialog<Boolean> dialog = new Dialog<>();
+        dialog.setTitle("Manage Discount");
+        dialog.setHeaderText("Manage Bulk Discounts for " + p.getName());
+
+        // Set the button types
+        ButtonType closeButtonType = new ButtonType("Close", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().add(closeButtonType);
+
+        // Main container
+        VBox mainBox = new VBox(15);
+        mainBox.setPadding(new Insets(20));
+        mainBox.setStyle("-fx-pref-width: 500px;");
+
+        // Title
+        Label titleLabel = new Label("Current Discount Rules:");
+        titleLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
+        mainBox.getChildren().add(titleLabel);
+
+        // Container for existing rules
+        VBox rulesBox = new VBox(10);
+        rulesBox.setStyle("-fx-padding: 10; -fx-background-color: #f5f5f5; -fx-border-color: #ddd; -fx-border-radius: 5; -fx-background-radius: 5;");
+        
+        // Populate existing rules
+        if (p.getDiscountRules().isEmpty()) {
+            Label noRules = new Label("No discount rules yet. Add one below!");
+            noRules.setStyle("-fx-text-fill: #666; -fx-font-style: italic;");
+            rulesBox.getChildren().add(noRules);
+        } else {
+            for (Map.Entry<Integer, Double> rule : p.getDiscountRules().entrySet()) {
+                HBox ruleRow = new HBox(10);
+                ruleRow.setStyle("-fx-alignment: center-left; -fx-padding: 5;");
+                
+                Label ruleLabel = new Label("Buy " + rule.getKey() + "+ @ $" + String.format("%.2f", rule.getValue()));
+                ruleLabel.setStyle("-fx-font-size: 12px; -fx-min-width: 200px;");
+                
+                Button deleteBtn = new Button("Remove");
+                deleteBtn.setStyle("-fx-background-color: #F44336; -fx-text-fill: white; -fx-font-size: 10px;");
+                deleteBtn.setOnAction(ev -> {
+                    try {
+                        p.removeDiscount(rule.getKey());
+                        productService.saveAllProducts();
+                        showInfo("Rule removed!");
+                        dialog.close();
+                        showDiscountDialog(p); // Reopen to refresh
+                    } catch (Exception ex) {
+                        showError("Failed to remove: " + ex.getMessage());
+                    }
+                });
+                
+                ruleRow.getChildren().addAll(ruleLabel, deleteBtn);
+                rulesBox.getChildren().add(ruleRow);
+            }
+        }
+        
+        mainBox.getChildren().add(rulesBox);
+
+        // Add new rule section
+        Label addNewLabel = new Label("Add New Rule:");
+        addNewLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
+        mainBox.getChildren().add(addNewLabel);
+
+        GridPane addGrid = new GridPane();
+        addGrid.setHgap(10);
+        addGrid.setVgap(10);
+        addGrid.setStyle("-fx-padding: 10; -fx-background-color: #e8f5e9; -fx-border-color: #4CAF50; -fx-border-radius: 5; -fx-background-radius: 5;");
+
+        TextField qtyField = new TextField();
+        qtyField.setPromptText("Min Quantity");
+        TextField priceField = new TextField();
+        priceField.setPromptText("Discounted Price");
+
+        Button addBtn = new Button("Add Rule");
+        addBtn.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
+        addBtn.setOnAction(ev -> {
+            try {
+                int qty = Integer.parseInt(qtyField.getText());
+                double price = Double.parseDouble(priceField.getText());
+                p.setDiscount(qty, price);
+                productService.saveAllProducts();
+                showInfo("Discount rule added!");
+                dialog.close();
+                showDiscountDialog(p); // Reopen to refresh
+            } catch (NumberFormatException ex) {
+                showError("Invalid input format.");
+            } catch (Exception ex) {
+                showError("Failed to add rule: " + ex.getMessage());
+            }
+        });
+
+        addGrid.add(new Label("Min Quantity:"), 0, 0);
+        addGrid.add(qtyField, 1, 0);
+        addGrid.add(new Label("Price per Unit:"), 0, 1);
+        addGrid.add(priceField, 1, 1);
+        addGrid.add(addBtn, 1, 2);
+
+        mainBox.getChildren().add(addGrid);
+
+        // Clear all button if rules exist
+        if (!p.getDiscountRules().isEmpty()) {
+            Button clearAllBtn = new Button("Clear All Discounts");
+            clearAllBtn.setStyle("-fx-background-color: #FF5722; -fx-text-fill: white;");
+            clearAllBtn.setOnAction(ev -> {
+                try {
+                    p.clearDiscounts();
+                    productService.saveAllProducts();
+                    showInfo("All discounts cleared!");
+                    dialog.close();
+                    loadProductsData();
+                } catch (Exception ex) {
+                    showError("Failed to clear: " + ex.getMessage());
+                }
+            });
+            mainBox.getChildren().add(clearAllBtn);
+        }
+
+        dialog.getDialogPane().setContent(mainBox);
+        dialog.setResultConverter(dialogButton -> {
+            loadProductsData(); // Refresh table on close
+            return null;
+        });
+
+        dialog.showAndWait();
     }
 
 

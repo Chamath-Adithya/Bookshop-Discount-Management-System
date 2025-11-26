@@ -78,7 +78,8 @@
                             <TableColumn fx:id="productNameCol" text="Name" prefWidth="250"/>
                             <TableColumn fx:id="productPriceCol" text="Price" prefWidth="100"/>
                             <TableColumn fx:id="productQtyCol" text="Quantity" prefWidth="100"/>
-                            <TableColumn fx:id="productActionCol" text="Action" prefWidth="100"/>
+                            <TableColumn fx:id="productDiscountCol" text="Active Discount" prefWidth="150"/>
+                            <TableColumn fx:id="productActionCol" text="Action" prefWidth="150"/>
                         </columns>
                         <columnResizePolicy>
                             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
