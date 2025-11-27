@@ -11,16 +11,22 @@ import bookshop.util.FileHandler;
 
 // Team Member B: Implement service to manage customer data (e.g., loading from CSV).
 public class CustomerService {
-    private static final String CUSTOMERS_FILE_PATH = "data/customers.csv";
+    private static final String DEFAULT_CUSTOMERS_FILE_PATH = "data/customers.csv";
+    private final String customersFilePath;
     private List<Customer> customers;
 
     public CustomerService() throws IOException {
+        this(DEFAULT_CUSTOMERS_FILE_PATH);
+    }
+
+    public CustomerService(String customersFilePath) throws IOException {
+        this.customersFilePath = customersFilePath;
         this.customers = new ArrayList<>();
         loadCustomers();
     }
 
     private void loadCustomers() throws IOException {
-        List<String> lines = FileHandler.readCsv(CUSTOMERS_FILE_PATH);
+        List<String> lines = FileHandler.readCsv(customersFilePath);
         // Skip the header row
         for (int i = 1; i < lines.size(); i++) {
             String line = lines.get(i);
@@ -73,7 +79,7 @@ public class CustomerService {
                 FileHandler.escapeCsvField(phone));
             lines.add(line);
         }
-        FileHandler.writeCsv(CUSTOMERS_FILE_PATH, lines);
+        FileHandler.writeCsv(customersFilePath, lines);
     }
 
     public void addCustomer(Customer customer) throws IOException {
@@ -89,7 +95,7 @@ public class CustomerService {
             FileHandler.escapeCsvField(customer.getName()), 
             customer.getType(), 
             FileHandler.escapeCsvField(phone));
-        FileHandler.appendLine(CUSTOMERS_FILE_PATH, line);
+        FileHandler.appendLine(customersFilePath, line);
         this.customers.add(customer);
     }
 

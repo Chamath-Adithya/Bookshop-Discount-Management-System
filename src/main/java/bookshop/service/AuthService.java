@@ -12,7 +12,16 @@ import org.mindrot.jbcrypt.BCrypt;
  */
 public class AuthService {
 
-    private static final String USERS_FILE = "data/users.csv";
+    private static final String DEFAULT_USERS_FILE = "data/users.csv";
+    private final String usersFile;
+
+    public AuthService() {
+        this(DEFAULT_USERS_FILE);
+    }
+
+    public AuthService(String usersFile) {
+        this.usersFile = usersFile;
+    }
 
     /**
      * Authenticate a user for a specific role.
@@ -29,8 +38,8 @@ public class AuthService {
             return false;
         }
 
-        List<String> lines = FileHandler.readCsv(USERS_FILE);
-        System.out.println("[AuthService] Read " + lines.size() + " lines from " + USERS_FILE);
+        List<String> lines = FileHandler.readCsv(usersFile);
+        System.out.println("[AuthService] Read " + lines.size() + " lines from " + usersFile);
 
         for (String line : lines) {
             line = line.trim();

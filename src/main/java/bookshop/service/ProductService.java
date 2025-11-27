@@ -11,16 +11,22 @@ import bookshop.util.FileHandler;
 
 // Team Member C: Implement the ProductService to load and manage product data.
 public class ProductService {
-    private static final String PRODUCTS_FILE_PATH = "data/products.csv";
+    private static final String DEFAULT_PRODUCTS_FILE_PATH = "data/products.csv";
+    private final String productsFilePath;
     private List<Product> products;
 
     public ProductService() throws IOException {
+        this(DEFAULT_PRODUCTS_FILE_PATH);
+    }
+
+    public ProductService(String productsFilePath) throws IOException {
+        this.productsFilePath = productsFilePath;
         this.products = new ArrayList<>();
         loadProducts();
     }
 
     private void loadProducts() throws IOException {
-        List<String> lines = FileHandler.readCsv(PRODUCTS_FILE_PATH);
+        List<String> lines = FileHandler.readCsv(productsFilePath);
         // Skip the header row
         for (int i = 1; i < lines.size(); i++) {
             String line = lines.get(i);
@@ -87,7 +93,7 @@ public class ProductService {
             product.getRealPrice(), 
             discounts == null ? "" : discounts, 
             product.getQuantity());
-        FileHandler.appendLine(PRODUCTS_FILE_PATH, line);
+        FileHandler.appendLine(productsFilePath, line);
         this.products.add(product);
     }
 
@@ -156,6 +162,6 @@ public class ProductService {
                 p.getQuantity());
             lines.add(line);
         }
-        FileHandler.writeCsv(PRODUCTS_FILE_PATH, lines);
+        FileHandler.writeCsv(productsFilePath, lines);
     }
 }
