@@ -80,9 +80,9 @@ public class CashierController {
 
     @FXML
     private void handleCustomerLookup() {
-        String phone = customerPhoneField.getText().trim();
-        if (phone.isEmpty()) {
-            showWarning("Please enter a phone number!");
+        String input = customerPhoneField.getText().trim();
+        if (input.isEmpty()) {
+            showWarning("Please enter a phone number or name!");
             return;
         }
         
@@ -95,10 +95,16 @@ public class CashierController {
             }
         }
         
-        // Search for customer by phone
+        // Search for customer by phone or name
         Customer found = null;
         for (Customer c : customerService.getAllCustomers()) {
-            if (c.getPhone().equals(phone)) {
+            // Check phone match
+            if (c.getPhone() != null && c.getPhone().equals(input)) {
+                found = c;
+                break;
+            }
+            // Check name match (case-insensitive)
+            if (c.getName().equalsIgnoreCase(input)) {
                 found = c;
                 break;
             }
