@@ -30,7 +30,6 @@ public class CashierController {
 
     @FXML private Text dateTimeText;
     @FXML private TextField searchField;
-    @FXML private Button searchBtn;
     @FXML private Button refreshBtn;
     @FXML private GridPane productsGrid;
     
@@ -548,10 +547,9 @@ public class CashierController {
     }
 
     private void setupEventHandlers() {
-        searchField.setOnKeyPressed(e -> {
-            if (e.getCode().toString().equals("ENTER")) {
-                handleSearch();
-            }
+        // Auto-search when typing
+        searchField.textProperty().addListener((obs, oldVal, newVal) -> {
+            handleSearch();
         });
     }
 

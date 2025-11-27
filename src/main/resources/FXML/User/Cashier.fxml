@@ -32,8 +32,7 @@
         <VBox spacing="20" style="-fx-padding: 20;">
             <!-- Search & Filter -->
             <HBox spacing="15" alignment="CENTER_LEFT">
-                <TextField fx:id="searchField" promptText="Search products by name or ID..." prefWidth="400" style="-fx-font-size: 14px;"/>
-                <Button fx:id="searchBtn" text="Search" onAction="#handleSearch"/>
+                <TextField fx:id="searchField" promptText="Search products..." HBox.hgrow="ALWAYS" styleClass="text-field"/>
                 <Button fx:id="refreshBtn" text="Refresh Stock" onAction="#handleRefresh" styleClass="button-secondary"/>
             </HBox>
             
