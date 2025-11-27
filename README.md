@@ -1,6 +1,6 @@
 # 📘 Bookshop Discount Management System (BDMS)
 
-> **University Object-Oriented Programming (OOP) Assignment**
+> **University of Sri Jayewardenepura - Object-Oriented Programming (OOP) Assignment**
 >
 > *A comprehensive JavaFX application demonstrating core OOP principles, secure data handling, and modern UI design.*
 
@@ -187,4 +187,4 @@ BookshopDiscountSystem/
 *   **kaveesha-tharindi5** - *Validation, Exceptions & Testing*
 
 ---
-*This project was developed for the University Object-Oriented Programming Module.*
+*This project was developed for the Object-Oriented Programming Module at the University of Sri Jayewardenepura.*
