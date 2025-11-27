@@ -1,3 +1,6 @@
-product_id,product_name,real_price,discounts
-p01,Pen,100.0,"5:95.0;10:80.0"
-p02,Pencil,40.0,"3:35.0;10:30.0;100:25.0"
+product_id,product_name,real_price,discounts,quantity
+3,Pencil,20.00,"10:45.0;5:61.0;7:50.0;15:40.0",80
+4,cat,1000.00,"5:900.0;10:800.0",4
+p05,dog,1000.00,"5:750.0;2:800.0",21
+p06,jdjoijd,56.00,"",9
+p07,dnfuh,355.00,"",8

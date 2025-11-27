@@ -1,0 +1,15 @@
+===== BOOKSHOP BILL =====
+Date: 2025-11-28 02:03:23
+Customer: Yasas (VIP)
+----------------------------
+cat                  x1
+  @ Rs. 1000.00
+  Discount: -Rs. 50.00
+  Total:    Rs. 950.00
+dog                  x5
+  @ Rs. 1000.00
+  Discount: -Rs. 1500.00
+  Total:    Rs. 3500.00
+----------------------------
+GRAND TOTAL: Rs. 4450.00
+===========================
