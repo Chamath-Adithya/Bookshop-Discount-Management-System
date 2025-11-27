@@ -2,9 +2,12 @@ package bookshop.controllers.User;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -26,30 +29,32 @@ public class CashierController {
 
     @FXML private Text dateTimeText;
     @FXML private TextField searchField;
+    @FXML private Button searchBtn;
+    @FXML private Button refreshBtn;
     @FXML private GridPane productsGrid;
-    @FXML private TextField selectedProductField;
-    @FXML private TextField productPriceField;
-    @FXML private TextField discountInfoField;
-    @FXML private TextField quantityField;
+    
+    // Customer Section
     @FXML private TextField customerPhoneField;
-    @FXML private TextField customerTypeField;
+    @FXML private Button lookupCustomerBtn;
+    @FXML private Text customerTypeField;
     @FXML private Text discountPercentText;
+    
+    // Cart Section
     @FXML private VBox cartItemsBox;
     @FXML private Text subtotalText;
     @FXML private Text discountText;
     @FXML private Text totalText;
+    @FXML private Button payButton;
     @FXML private Button logoutBtn;
-    @FXML private Button searchBtn;
-    @FXML private Button refreshBtn;
-    @FXML private Button lookupCustomerBtn;
 
     private final List<Product> allProducts = new CopyOnWriteArrayList<>();
     private final List<Product> filteredProducts = new CopyOnWriteArrayList<>();
     private final Map<String, CartItem> cartItems = new LinkedHashMap<>();
+    
     private ProductService productService;
     private CustomerService customerService;
-    private Product selectedProduct;
     private Customer currentCustomer;
+    
     private WatchService watchService;
     private Thread fileWatchThread;
     private long productsLastModified = 0L;
@@ -105,20 +110,23 @@ public class CashierController {
             
             // Show discount info
             if ("VIP".equalsIgnoreCase(found.getType())) {
-                discountPercentText.setText("VIP Customer: 5% discount applied");
+                discountPercentText.setText("VIP: 5% OFF");
                 discountPercentText.setStyle("-fx-font-size: 12; -fx-fill: green; -fx-font-weight: bold;");
             } else {
-                discountPercentText.setText("Regular Customer: No additional discount");
-                discountPercentText.setStyle("-fx-font-size: 12; -fx-fill: #666; -fx-font-weight: bold;");
+                discountPercentText.setText("Regular");
+                discountPercentText.setStyle("-fx-font-size: 12; -fx-fill: #666;");
             }
             showInfo("Customer found: " + found.getName());
         } else {
             currentCustomer = null;
-            customerTypeField.setText("Not Found");
-            discountPercentText.setText("No customer found with this phone number");
-            discountPercentText.setStyle("-fx-font-size: 12; -fx-fill: red; -fx-font-weight: bold;");
-            showWarning("Customer not found. Proceeding as Regular customer.");
+            customerTypeField.setText("Guest");
+            discountPercentText.setText("No account found");
+            discountPercentText.setStyle("-fx-font-size: 12; -fx-fill: #999;");
+            showWarning("Customer not found. Proceeding as Guest.");
         }
+        
+        // Recalculate cart totals as customer type might have changed
+        updateCartDisplay();
     }
 
     private void setupDateTime() {
@@ -127,7 +135,9 @@ public class CashierController {
             while (true) {
                 try {
                     Platform.runLater(() -> {
-                        dateTimeText.setText(LocalDateTime.now().format(formatter));
+                        if (dateTimeText != null) {
+                            dateTimeText.setText(LocalDateTime.now().format(formatter));
+                        }
                     });
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
@@ -184,7 +194,7 @@ public class CashierController {
             long lastMod = prodFile.exists() ? prodFile.lastModified() : 0L;
             
             // Only reload if file has changed
-            if (lastMod == productsLastModified) {
+            if (lastMod == productsLastModified && !allProducts.isEmpty()) {
                 return;
             }
             productsLastModified = lastMod;
@@ -203,66 +213,106 @@ public class CashierController {
 
     private void displayProducts() {
         productsGrid.getChildren().clear();
+        int col = 0;
         int row = 0;
+        int maxCols = 3; // Number of columns in grid
         
         for (Product product : filteredProducts) {
             VBox productCard = createProductCard(product);
-            productsGrid.add(productCard, 0, row);
-            row++;
+            productsGrid.add(productCard, col, row);
+            
+            col++;
+            if (col >= maxCols) {
+                col = 0;
+                row++;
+            }
         }
     }
 
     private VBox createProductCard(Product product) {
         VBox card = new VBox(10);
-        card.setStyle("-fx-border-color: #ddd; -fx-border-radius: 5; -fx-padding: 15; " +
-                     "-fx-background-color: white; -fx-cursor: hand;");
-        card.setPrefWidth(180);
+        card.getStyleClass().add("card");
+        card.setStyle("-fx-padding: 15; -fx-background-color: white; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 0);");
+        card.setPrefWidth(200);
+        card.setAlignment(Pos.TOP_LEFT);
         
-        Text nameText = new Text(product.getName());
-        nameText.setStyle("-fx-font-weight: bold; -fx-font-size: 14;");
+        // Product Name
+        Label nameLabel = new Label(product.getName());
+        nameLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
+        nameLabel.setWrapText(true);
         
-        Text priceText = new Text("Rs. " + String.format("%.2f", product.getRealPrice()));
-        priceText.setStyle("-fx-font-size: 12; -fx-fill: green;");
+        // Price and Stock
+        HBox priceBox = new HBox(10);
+        priceBox.setAlignment(Pos.CENTER_LEFT);
+        Label priceLabel = new Label("Rs. " + String.format("%.2f", product.getRealPrice()));
+        priceLabel.setStyle("-fx-text-fill: #d4af37; -fx-font-weight: bold; -fx-font-size: 14px;");
         
-        Text qtyText = new Text("Stock: " + product.getQuantity());
-        qtyText.setStyle("-fx-font-size: 11; -fx-fill: gray;");
+        Label stockLabel = new Label("Stock: " + product.getQuantity());
+        stockLabel.setStyle("-fx-text-fill: #888; -fx-font-size: 12px;");
         
-        String discountInfo = buildDiscountString(product);
-        Text discountTextNode = new Text(discountInfo);
-        discountTextNode.setStyle("-fx-font-size: 11; -fx-fill: #0F3D20;");
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
         
-        Button selectBtn = new Button("Select");
-        selectBtn.setPrefWidth(150);
-        selectBtn.setStyle("-fx-padding: 8; -fx-background-color: #0F3D20; -fx-text-fill: white;");
-        selectBtn.setOnAction(e -> handleProductSelect(product));
+        priceBox.getChildren().addAll(priceLabel, spacer, stockLabel);
         
-        card.getChildren().addAll(nameText, priceText, qtyText, discountTextNode, selectBtn);
+        // Discount Badge
+        HBox badgeBox = new HBox();
+        if (!product.getDiscountRules().isEmpty()) {
+            Label badge = new Label("Bulk Offer Available");
+            badge.setStyle("-fx-background-color: #e8f5e9; -fx-text-fill: #2e7d32; -fx-padding: 2 8; -fx-background-radius: 10; -fx-font-size: 10px;");
+            badgeBox.getChildren().add(badge);
+        }
+        
+        // Add to Cart Controls
+        HBox controlsBox = new HBox(10);
+        controlsBox.setAlignment(Pos.CENTER_LEFT);
+        
+        Spinner<Integer> qtySpinner = new Spinner<>(1, Math.max(1, product.getQuantity()), 1);
+        qtySpinner.setEditable(true);
+        qtySpinner.setPrefWidth(70);
+        
+        Button addBtn = new Button("Add");
+        addBtn.setStyle("-fx-background-color: #1a1a1a; -fx-text-fill: white; -fx-font-size: 12px; -fx-padding: 5 15;");
+        addBtn.setOnAction(e -> handleAddToCart(product, qtySpinner.getValue()));
+        
+        // Disable if out of stock
+        if (product.getQuantity() <= 0) {
+            qtySpinner.setDisable(true);
+            addBtn.setDisable(true);
+            addBtn.setText("Out of Stock");
+        }
+        
+        controlsBox.getChildren().addAll(qtySpinner, addBtn);
+        
+        card.getChildren().addAll(nameLabel, priceBox, badgeBox, controlsBox);
         return card;
     }
 
-    private String buildDiscountString(Product product) {
-        Map<Integer, Double> discounts = product.getDiscountRules();
-        if (discounts == null || discounts.isEmpty()) {
-            return "No discount";
+    private void handleAddToCart(Product product, int quantity) {
+        if (quantity <= 0) return;
+        
+        if (quantity > product.getQuantity()) {
+            showWarning("Insufficient stock! Available: " + product.getQuantity());
+            return;
         }
         
-        StringBuilder sb = new StringBuilder("Discounts: ");
-        discounts.forEach((qty, price) -> 
-            sb.append(qty).append("x: Rs").append(String.format("%.2f", price)).append("; ")
-        );
-        return sb.toString();
-    }
-
-    private void handleProductSelect(Product product) {
-        selectedProduct = product;
-        selectedProductField.setText(product.getName());
-        productPriceField.setText(String.format("Rs. %.2f", product.getRealPrice()));
+        CartItem item = new CartItem(product, quantity, currentCustomer);
         
-        String discountInfo = buildDiscountString(product);
-        discountInfoField.setText(discountInfo);
+        if (cartItems.containsKey(product.getProductId())) {
+            CartItem existing = cartItems.get(product.getProductId());
+            int newQty = existing.quantity + quantity;
+            if (newQty > product.getQuantity()) {
+                showWarning("Cannot add more than available stock!");
+                return;
+            }
+            existing.quantity = newQty;
+            // Update customer ref in case it changed
+            existing.customer = currentCustomer; 
+        } else {
+            cartItems.put(product.getProductId(), item);
+        }
         
-        quantityField.clear();
-        quantityField.requestFocus();
+        updateCartDisplay();
     }
 
     @FXML
@@ -283,50 +333,15 @@ public class CashierController {
         displayProducts();
     }
 
-    @FXML
-    private void handleAddToCart() {
-        if (selectedProduct == null) {
-            showWarning("Please select a product first!");
-            return;
-        }
-        
-        try {
-            int quantity = Integer.parseInt(quantityField.getText().trim());
-            
-            if (quantity <= 0) {
-                showWarning("Quantity must be greater than 0!");
-                return;
-            }
-            
-            if (quantity > selectedProduct.getQuantity()) {
-                showWarning("Insufficient stock! Available: " + selectedProduct.getQuantity());
-                return;
-            }
-            
-            CartItem item = new CartItem(selectedProduct, quantity, currentCustomer);
-            
-            if (cartItems.containsKey(selectedProduct.getProductId())) {
-                CartItem existing = cartItems.get(selectedProduct.getProductId());
-                existing.quantity += quantity;
-            } else {
-                cartItems.put(selectedProduct.getProductId(), item);
-            }
-            
-            updateCartDisplay();
-            quantityField.clear();
-            showInfo("Added to cart!");
-            
-        } catch (NumberFormatException e) {
-            showWarning("Please enter a valid quantity!");
-        }
-    }
-
     private void updateCartDisplay() {
         cartItemsBox.getChildren().clear();
         double subtotal = 0;
         double totalDiscount = 0;
         
         for (CartItem item : cartItems.values()) {
+            // Update customer reference for all items to ensure current VIP status applies
+            item.customer = currentCustomer;
+            
             HBox itemBox = createCartItemBox(item);
             cartItemsBox.getChildren().add(itemBox);
             
@@ -343,55 +358,54 @@ public class CashierController {
 
     private HBox createCartItemBox(CartItem item) {
         HBox box = new HBox(10);
-        box.setStyle("-fx-border-color: #eee; -fx-border-radius: 3; -fx-padding: 8; -fx-background-color: #f5f5f5;");
-        box.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+        box.setStyle("-fx-border-color: #eee; -fx-border-radius: 5; -fx-padding: 10; -fx-background-color: white;");
+        box.setAlignment(Pos.CENTER_LEFT);
         
         VBox details = new VBox(3);
         Text nameText = new Text(item.product.getName());
-        nameText.setStyle("-fx-font-weight: bold; -fx-font-size: 12;");
-        Text priceText = new Text(item.quantity + "x Rs. " + String.format("%.2f", item.product.getRealPrice()) + 
-                                 " = Rs. " + String.format("%.2f", item.getSubtotal()));
-        priceText.setStyle("-fx-font-size: 11;");
+        nameText.setStyle("-fx-font-weight: bold; -fx-font-size: 13px;");
+        
+        Text priceText = new Text(item.quantity + " x Rs. " + String.format("%.2f", item.product.getRealPrice()));
+        priceText.setStyle("-fx-font-size: 12px; -fx-fill: #666;");
         
         details.getChildren().addAll(nameText, priceText);
         
         // Show discount details if applicable
         if (item.getTotalDiscount() > 0) {
-            StringBuilder discountDetails = new StringBuilder();
-            if (item.customer != null && "VIP".equalsIgnoreCase(item.customer.getType())) {
-                discountDetails.append("(VIP Customer) ");
-            }
-            discountDetails.append("- Save Rs. ").append(String.format("%.2f", item.getTotalDiscount()));
-            
-            Text discText = new Text(discountDetails.toString());
-            discText.setStyle("-fx-font-size: 10; -fx-fill: green;");
+            Text discText = new Text("Saved: Rs. " + String.format("%.2f", item.getTotalDiscount()));
+            discText.setStyle("-fx-font-size: 11px; -fx-fill: #4CAF50; -fx-font-weight: bold;");
             details.getChildren().add(discText);
         }
         
-        HBox.setHgrow(details, javafx.scene.layout.Priority.ALWAYS);
+        HBox.setHgrow(details, Priority.ALWAYS);
         
-        Button removeBtn = new Button("Remove");
-        removeBtn.setStyle("-fx-padding: 5; -fx-font-size: 10; -fx-background-color: #cc0000; -fx-text-fill: white;");
+        VBox actions = new VBox(5);
+        actions.setAlignment(Pos.CENTER_RIGHT);
+        
+        Text totalItemPrice = new Text("Rs. " + String.format("%.2f", item.getSubtotal() - item.getTotalDiscount()));
+        totalItemPrice.setStyle("-fx-font-weight: bold;");
+        
+        Button removeBtn = new Button("×");
+        removeBtn.setStyle("-fx-background-color: transparent; -fx-text-fill: #ff6b6b; -fx-font-size: 16px; -fx-padding: 0; -fx-cursor: hand;");
         removeBtn.setOnAction(e -> {
             cartItems.remove(item.product.getProductId());
             updateCartDisplay();
         });
         
-        box.getChildren().addAll(details, removeBtn);
+        actions.getChildren().addAll(totalItemPrice, removeBtn);
+        
+        box.getChildren().addAll(details, actions);
         return box;
     }
 
     @FXML
     private void handleClearCart() {
-        if (cartItems.isEmpty()) {
-            showWarning("Cart is already empty!");
-            return;
-        }
+        if (cartItems.isEmpty()) return;
         
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Clear Cart");
-        alert.setHeaderText("Are you sure?");
-        alert.setContentText("This will clear all items from the cart.");
+        alert.setHeaderText(null);
+        alert.setContentText("Clear all items from cart?");
         
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
@@ -403,16 +417,15 @@ public class CashierController {
     @FXML
     private void handleCheckout() {
         if (cartItems.isEmpty()) {
-            showWarning("Cart is empty! Add products before checkout.");
+            showWarning("Cart is empty!");
             return;
         }
         
         String totalStr = totalText.getText().replace("Rs. ", "").trim();
-        double total = Double.parseDouble(totalStr);
         
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirm Checkout");
-        alert.setHeaderText("Total Amount: Rs. " + String.format("%.2f", total));
+        alert.setHeaderText("Total Amount: " + totalStr);
         alert.setContentText("Proceed with payment?");
         
         Optional<ButtonType> result = alert.showAndWait();
@@ -420,7 +433,7 @@ public class CashierController {
             generateBill();
             cartItems.clear();
             updateCartDisplay();
-            showInfo("Payment successful! Thank you for your purchase.");
+            showInfo("Payment successful!");
         }
     }
 
@@ -433,21 +446,26 @@ public class CashierController {
             
             StringBuilder bill = new StringBuilder();
             bill.append("===== BOOKSHOP BILL =====\n");
-            bill.append("Date & Time: ").append(LocalDateTime.now()).append("\n");
+            bill.append("Date: ").append(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).append("\n");
+            if (currentCustomer != null) {
+                bill.append("Customer: ").append(currentCustomer.getName())
+                    .append(" (").append(currentCustomer.getType()).append(")\n");
+            } else {
+                bill.append("Customer: Guest\n");
+            }
             bill.append("----------------------------\n");
             
             for (CartItem item : cartItems.values()) {
-                bill.append(item.product.getName()).append("\n");
-                bill.append("  Qty: ").append(item.quantity).append(" x Rs. ")
-                    .append(String.format("%.2f", item.product.getRealPrice())).append("\n");
-                bill.append("  Subtotal: Rs. ").append(String.format("%.2f", item.getSubtotal())).append("\n");
+                bill.append(String.format("%-20s x%d\n", item.product.getName(), item.quantity));
+                bill.append(String.format("  @ Rs. %.2f\n", item.product.getRealPrice()));
                 if (item.getTotalDiscount() > 0) {
-                    bill.append("  Discount: - Rs. ").append(String.format("%.2f", item.getTotalDiscount())).append("\n");
+                    bill.append(String.format("  Discount: -Rs. %.2f\n", item.getTotalDiscount()));
                 }
+                bill.append(String.format("  Total:    Rs. %.2f\n", item.getSubtotal() - item.getTotalDiscount()));
             }
             
             bill.append("----------------------------\n");
-            bill.append("TOTAL: Rs. ").append(totalText.getText().replace("Rs. ", "")).append("\n");
+            bill.append("GRAND TOTAL: ").append(totalText.getText()).append("\n");
             bill.append("===========================\n");
             
             Files.write(Paths.get("bills", billName), bill.toString().getBytes());
@@ -462,13 +480,17 @@ public class CashierController {
     private void handleLogout() {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Logout");
-        alert.setHeaderText("Are you sure?");
-        alert.setContentText("Do you want to logout?");
+        alert.setHeaderText(null);
+        alert.setContentText("Are you sure you want to logout?");
         
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
-            Stage stage = (Stage) logoutBtn.getScene().getWindow();
-            stage.close();
+            try {
+                Stage stage = (Stage) logoutBtn.getScene().getWindow();
+                stage.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
