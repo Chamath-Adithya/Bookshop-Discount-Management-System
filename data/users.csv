@@ -1,6 +1,6 @@
 # user_id,username,password,role
-u01,admin,ad12,MANAGER
-u02,john,john456,WORKER
-u03,sarah,sarah789,WORKER
-u04,yasaru,yasaru123,WORKER
-aa,sksd,sddd,CASHIER
+u01,admin,$2a$10$AC1E5MPuMyUA3oJ2RqnHvuZXPpgGEE6OoomsSvZ65m.YD.ktI.jdO,MANAGER
+u02,john,$2a$10$D4IAfsMC3I7hKke2kcWwnOjd51UXhV//wgwg0wwpiDfGmHUZrusRG,WORKER
+u03,sarah,$2a$10$FMxyKJPvg6QLV0i2Y3Q0Qu5chlpIwwYZ3sgIjdVfIZGqRyRoy97J6,WORKER
+u04,yasaru,$2a$10$mHhdaB6pZkqKe6efsY02s..iGNbSiO2YLKnqpq3ijjLlI/KOS.2y2,WORKER
+aa,sksd,$2a$10$a3Ucu2FJG/.F1G0dE9.pSOZS.zZPmSFJ7qTbaEveRQ9OzTrFwjgIO,CASHIER

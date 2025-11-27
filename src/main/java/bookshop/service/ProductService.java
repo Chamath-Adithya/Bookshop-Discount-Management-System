@@ -81,7 +81,12 @@ public class ProductService {
         }
         // Serialize product line: id,name,realPrice,"discounts"
         String discounts = FileHandler.serializeDiscountMap(product.getDiscountRules());
-        String line = String.format("%s,%s,%.2f,\"%s\",%d", product.getProductId(), product.getName(), product.getRealPrice(), discounts == null ? "" : discounts, product.getQuantity());
+        String line = String.format("%s,%s,%.2f,\"%s\",%d", 
+            product.getProductId(), 
+            FileHandler.escapeCsvField(product.getName()), 
+            product.getRealPrice(), 
+            discounts == null ? "" : discounts, 
+            product.getQuantity());
         FileHandler.appendLine(PRODUCTS_FILE_PATH, line);
         this.products.add(product);
     }
@@ -143,7 +148,12 @@ public class ProductService {
         lines.add("product_id,product_name,real_price,discounts,quantity");
         for (Product p : products) {
             String discounts = FileHandler.serializeDiscountMap(p.getDiscountRules());
-            String line = String.format("%s,%s,%.2f,\"%s\",%d", p.getProductId(), p.getName(), p.getRealPrice(), discounts == null ? "" : discounts, p.getQuantity());
+            String line = String.format("%s,%s,%.2f,\"%s\",%d", 
+                p.getProductId(), 
+                FileHandler.escapeCsvField(p.getName()), 
+                p.getRealPrice(), 
+                discounts == null ? "" : discounts, 
+                p.getQuantity());
             lines.add(line);
         }
         FileHandler.writeCsv(PRODUCTS_FILE_PATH, lines);
