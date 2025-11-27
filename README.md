@@ -1,238 +1,186 @@
 # 📘 Bookshop Discount Management System (BDMS)
 
-## 🧠 Project Idea
-
-### **Overview**
-
-The **Bookshop Discount Management System (BDMS)** is a JavaFX-based desktop application built using **Java 11**, **JavaFX 17**, and **Maven**. It solves a real-world business challenge — managing bookshop product discounts efficiently based on **quantity purchased** and **customer type**. The system clearly demonstrates all major **Object-Oriented Programming (OOP)** principles such as **Encapsulation**, **Inheritance**, **Abstraction**, and **Polymorphism**, implemented through a structured and modular design.
-
-### **Problem Context**
-
-Bookshops commonly offer discounts when customers purchase products in bulk. For example:
-
-**Pen:**
-
-* Quantity 1 → Rs.100 each
-* Quantity 5 → Rs.95 each
-* Quantity 10 → Rs.80 each
-
-**Pencil:**
-
-* Quantity 1 → Rs.40 each
-* Quantity 3 → Rs.35 each
-* Quantity 10 → Rs.30 each
-* Quantity 100 → Rs.25 each
-
-Managing such multi-tiered discount structures manually often leads to:
-
-* **Errors** during manual calculations.
-* **Inconsistent discounts** among customers.
-* **Difficulty** in maintaining pricing rules.
-* **Time consumption** during customer checkout.
-
-Furthermore, bookshops often have **Regular** and **VIP** customers. VIP customers receive an additional discount (e.g., 5% off the final bill). This multi-level discount logic is complex to handle manually. Thus, the shop needs a **digital solution** that simplifies the process and reduces calculation errors.
-
-### **Proposed Solution**
-
-The BDMS provides a reliable and user-friendly platform for managing bookshop discounts. It allows:
-
-* **Managers** to add products, set real prices, and define **quantity-based discounts**.
-* **Workers** to calculate the total bill automatically for customers.
-* **Regular and VIP Customers** to receive appropriate pricing and benefits.
-
-The system automatically applies the best discount rule based on the entered quantity and adds an extra discount if the customer is VIP. The data (products, discounts, and customers) is stored in **CSV files**, ensuring that the system remains lightweight, portable, and database-free.
-
-### **Goals and Objectives**
-
-1. Automate **discount calculation** based on product quantity and customer type.
-2. Implement and showcase all **OOP principles** using real-world logic.
-3. Provide an interface for managers to manage product and discount information.
-4. Simplify the billing process for workers through automatic calculation.
-5. Reduce human errors and improve pricing consistency.
-6. Ensure data persistence using file-based storage.
-7. Demonstrate modular software design using Java packages and classes.
-
-### **Expected Outcomes**
-
-* Improved accuracy and efficiency in billing.
-* Automated discount management.
-* Demonstration of clean OOP-based system design.
-* Ready-to-use Java application with real-world relevance.
+> **University Object-Oriented Programming (OOP) Assignment**
+>
+> *A comprehensive JavaFX application demonstrating core OOP principles, secure data handling, and modern UI design.*
 
 ---
 
-## ⚙️ OOP Concepts Demonstrated
+## 🧠 Project Overview
+
+The **Bookshop Discount Management System (BDMS)** is a robust desktop application designed to solve a real-world business challenge: managing complex, multi-tiered discount structures in a retail environment. Built with **Java 11**, **JavaFX 17**, and **Maven**, this project serves as a practical demonstration of **Object-Oriented Programming (OOP)** concepts, software architecture, and secure coding practices.
+
+### ❓ The Problem
+Bookshops often struggle with manual discount calculations, leading to:
+*   **Human Error**: Mistakes in calculating bulk discounts or VIP rates.
+*   **Inefficiency**: Slow checkout processes.
+*   **Inconsistency**: Different discounts applied to similar customers.
+*   **Security Risks**: Unsecured data storage and weak authentication.
+
+### ✅ The Solution
+BDMS automates the entire process by:
+1.  **Dynamic Pricing**: Automatically applying quantity-based bulk discounts.
+2.  **Customer Tiers**: Distinguishing between **Regular** and **VIP** customers (VIPs get an extra 5% off).
+3.  **Secure Access**: Role-based login (Manager vs. Cashier) with **BCrypt password hashing**.
+4.  **Data Integrity**: Using file locking to prevent data corruption in CSV storage.
+
+---
+
+## ⚙️ Key Features
+
+### 🔐 Security & Reliability
+*   **BCrypt Hashing**: User passwords are never stored in plain text. They are hashed using the industry-standard BCrypt algorithm.
+*   **Input Sanitization**: All user inputs are sanitized to prevent **CSV Injection** attacks.
+*   **Concurrency Control**: Implemented **File Locking** (`FileChannel.lock`) to ensure safe concurrent writes to data files.
+*   **Strict Validation**: Robust validation for customer data (e.g., phone number format).
+
+### 💻 Modern User Interface
+*   **Cashier Portal**: A responsive, grid-based POS interface with real-time product filtering.
+*   **Auto-Search**: Instant product and customer lookup without manual "Search" buttons.
+*   **Live Cart**: Dynamic shopping cart with real-time subtotal and discount updates.
+
+### 🛠 Architecture
+*   **MVC Pattern**: Separation of concerns using Model-View-Controller architecture.
+*   **Service Layer**: Business logic is encapsulated in `Service` classes (`AuthService`, `ProductService`, `CustomerService`).
+*   **File-Based Persistence**: Lightweight CSV storage (`users.csv`, `products.csv`, `customers.csv`) making the app portable and database-free.
+
+---
+
+## 📚 OOP Principles Demonstrated
+
+This project is built upon the four pillars of Object-Oriented Programming:
 
 ### 1️⃣ Encapsulation
-
-Private fields with getters/setters ensure data protection and controlled access.
+Data is hidden within classes and accessed only through public methods, ensuring data integrity.
 
 ```java
 public class Product {
-    private String name;
+    private String productId;
     private double realPrice;
-    private Map<Integer, Double> discountRules;
-
-    public void setDiscount(int quantity, double price) {
-        discountRules.put(quantity, price);
+    
+    // Controlled access via getters and setters
+    public double getRealPrice() { return realPrice; }
+    public void setRealPrice(double price) {
+        if (price < 0) throw new IllegalArgumentException("Price cannot be negative");
+        this.realPrice = price;
     }
 }
 ```
 
 ### 2️⃣ Inheritance
-
-The `VIPCustomer` inherits from `Customer` and overrides the discount calculation behavior.
+Specialized classes inherit behavior from generalized classes to promote code reuse.
 
 ```java
-public class VIPCustomer extends Customer {
-    private double vipDiscountRate = 0.05;
+// Base class
+public abstract class Customer {
+    protected String name;
+    public abstract double getBaseDiscountRate();
+}
 
+// Derived class
+public class VIPCustomer extends Customer {
     @Override
-    public double calculateFinalPrice(double amount) {
-        return amount - (amount * vipDiscountRate);
+    public double getBaseDiscountRate() {
+        return 0.05; // VIPs get 5% base discount
     }
 }
 ```
 
 ### 3️⃣ Polymorphism
-
-Methods like `calculateFinalPrice()` behave differently based on object type.
+The system treats different objects (Regular vs. VIP) uniformly but they behave differently at runtime.
 
 ```java
-Customer regular = new RegularCustomer();
-Customer vip = new VIPCustomer();
-
-regular.calculateFinalPrice(1000); // 1000
-vip.calculateFinalPrice(1000);     // 950
+Customer customer = new VIPCustomer("John");
+// The system doesn't need to know it's a VIP; it just asks for the rate.
+double discount = total * customer.getBaseDiscountRate(); 
 ```
 
 ### 4️⃣ Abstraction
-
-Abstract classes define general behaviors shared across subclasses.
+Complex logic is hidden behind simple interfaces. The `FileHandler` utility abstracts away the low-level details of file I/O, locking, and parsing.
 
 ```java
-public abstract class User {
-    protected String username;
-    public abstract void performAction();
-}
+// High-level usage
+FileHandler.writeCsv("data/products.csv", lines);
+
+// Low-level implementation (hidden)
+// - Opens FileChannel
+// - Acquires FileLock
+// - Writes ByteBuffers
+// - Handles IOExceptions
 ```
 
 ---
 
-## 📂 Folder Structure
+## 📂 Project Structure
 
 ```
 BookshopDiscountSystem/
-├── README.md
-├── pom.xml
-├── .gitignore
-├── docs/
-│   ├── AI_AGENT_GUIDE.md
-│   ├── DATABASE.md
-│   ├── LEARNING_GUIDE.md
-│   └── PLAN.md
-├── data/
-│   ├── products.csv
-│   ├── users.csv
-│   └── customers.csv
-├── src/
-│   ├── main/
-│   │   └── java/
-│   │       ├── module-info.java
-│   │       └── bookshop/
-│   │           ├── App.java
-│   │           ├── exceptions/
-│   │           │   ├── InvalidProductException.java
-│   │           │   └── InvalidQuantityException.java
-│   │           ├── model/
-│   │           │   ├── Customer.java
-│   │           │   ├── Discount.java
-│   │           │   ├── Manager.java
-│   │           │   ├── Product.java
-│   │           │   ├── RegularCustomer.java
-│   │           │   ├── User.java
-│   │           │   ├── VIPCustomer.java
-│   │           │   └── Worker.java
-│   │           ├── service/
-│   │           │   ├── BillingService.java
-│   │           │   ├── CustomerService.java
-│   │           │   ├── DiscountService.java
-│   │           │   └── ProductService.java
-│   │           └── util/
-│   │               ├── FileHandler.java
-│   │               └── InputValidator.java
-│   └── test/
-│       └── java/
-│           └── bookshop/
-│               └── BillingServiceTest.java
-└── target/                   # Maven build output (auto-generated)
+├── src/main/java/bookshop/
+│   ├── controllers/      # UI Logic (CashierController, AdminController)
+│   ├── model/            # Data Classes (Product, Customer, User)
+│   ├── service/          # Business Logic (AuthService, ProductService)
+│   └── util/             # Helpers (FileHandler, PasswordMigrator)
+├── src/main/resources/
+│   ├── FXML/             # UI Layouts (.fxml)
+│   └── Styles/           # CSS Styling
+├── data/                 # CSV Data Storage
+├── docs/                 # Documentation & Security Audit
+└── pom.xml               # Maven Dependencies
 ```
 
 ---
 
-## ⚙️ Technologies Used
-
-| Technology       | Purpose                                    |
-| ---------------- | ------------------------------------------ |
-| **Java 11+**     | Core programming language                  |
-| **JavaFX 17**    | GUI framework                              |
-| **Maven**        | Build automation and dependency management |
-| **JUnit 5**      | Unit testing                               |
-| **CSV Files**    | Data persistence                           |
-| **Git & GitHub** | Version control and collaboration          |
-
----
-
-## 🧩 Installation & Setup
+## 🚀 Installation & Setup
 
 ### Prerequisites
+*   **Java JDK 11** or higher.
+*   **Maven** 3.6+.
 
-* Java 11 or newer
-* Maven 3.6+
-* IDE (IntelliJ IDEA, Eclipse, or VS Code)
+### Steps to Run
+1.  **Clone the Repository**:
+    ```bash
+    git clone https://github.com/yourusername/BookshopDiscountSystem.git
+    cd BookshopDiscountSystem
+    ```
 
-### Steps
+2.  **Build the Project**:
+    ```bash
+    mvn clean install
+    ```
 
-1. **Clone the Repository**
+3.  **Run the Application**:
+    ```bash
+    mvn javafx:run
+    ```
 
-   ```bash
-   git clone https://github.com/yourusername/BookshopDiscountSystem.git
-   cd BookshopDiscountSystem
-   ```
-2. **Build the Project**
+### Default Credentials
+*   **Admin/Manager**: Creates new users.
+*   **Worker/Cashier**: Handles sales.
+*   *(Note: Default users are stored in `data/users.csv` with hashed passwords)*
 
-   ```bash
-   mvn clean install
-   ```
-3. **Run the Application**
+---
 
-   ```bash
-   mvn javafx:run
-   ```
+## 🧪 Usage Scenarios
+
+### Scenario 1: VIP Checkout
+1.  Cashier logs in.
+2.  Searches for "Pen" (Price: Rs.100).
+3.  Adds 10 Pens (Bulk discount applies -> Rs.80/each).
+4.  Selects Customer "John" (VIP).
+5.  **System Calculation**:
+    *   Subtotal: 10 * 100 = Rs.1000
+    *   Bulk Price: 10 * 80 = Rs.800
+    *   VIP Discount: 5% of Rs.800 = Rs.40
+    *   **Final Total**: Rs.760
+
+### Scenario 2: Security Check
+1.  Malicious user tries to edit `customers.csv` to inject a spreadsheet formula (`=cmd|...`).
+2.  **System Defense**: The application detects the special character and sanitizes the input by prepending a `'`, rendering the formula harmless.
 
 ---
 
-## 🧪 Example Scenario
-
-### ➤ Manager adds product and discounts
-
-```
-Product: Pen
-Real Price: Rs.120
-Discounts:
-1 → Rs.100
-5 → Rs.95
-10 → Rs.80
-```
-
-### ➤ Worker calculates total for a VIP customer
-
-```
-Customer Type: VIP
-Product: Pen x6
-Subtotal = 6 × Rs.95 = Rs.570
-VIP Discount (5%) = Rs.28.50
-Total = Rs.541.50
-```
+## 👨‍💻 Contributors
+*   **Chamath Adithya** - *Lead Developer & Architect*
 
 ---
+*This project was developed for the University Object-Oriented Programming Module.*
