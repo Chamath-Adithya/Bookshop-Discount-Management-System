@@ -5,6 +5,8 @@ import java.util.List;
 
 import bookshop.util.FileHandler;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 /**
  * Simple authentication service that validates credentials against data/users.csv
  */
@@ -33,51 +35,49 @@ public class AuthService {
         for (String line : lines) {
             line = line.trim();
             if (line.isEmpty() || line.startsWith("#")) {
-                System.out.println("[AuthService] Skipping empty/comment line: " + line);
                 continue;
             }
 
             String[] cols = line.split(",");
             if (cols.length < 4) {
-                System.err.println("[AuthService] Line has insufficient columns (expected 4, got " + cols.length + "): " + line);
                 continue;
             }
 
             String csvUsername = cols[1].trim();
-            String csvPassword = cols[2].trim();
+            String csvPasswordHash = cols[2].trim();
             String csvRole = cols[3].trim();
 
-            System.out.println("[AuthService] Comparing - Input: " + username + " vs CSV: " + csvUsername);
-
-            if (csvUsername.equals(username) && csvPassword.equals(password)) {
-                System.out.println("[AuthService] Username and password match!");
-                if (requiredRole == null) {
-                    System.out.println("[AuthService] No role requirement. Authentication successful.");
-                    return true;
+            if (csvUsername.equals(username)) {
+                // Verify password using BCrypt
+                boolean passwordMatch = false;
+                try {
+                    passwordMatch = BCrypt.checkpw(password, csvPasswordHash);
+                } catch (IllegalArgumentException e) {
+                    System.err.println("[AuthService] Invalid hash for user " + username + ", likely plain text. Please migrate passwords.");
+                    // Fallback for plain text (temporary/legacy support if needed, but better to fail secure)
+                    // passwordMatch = csvPasswordHash.equals(password); 
+                    return false; 
                 }
-                boolean roleMatch = false;
-                if (requiredRole == null || requiredRole.trim().isEmpty()) {
-                    roleMatch = true;
-                } else {
+
+                if (passwordMatch) {
+                    System.out.println("[AuthService] Password match for user: " + username);
+                    if (requiredRole == null) {
+                        return true;
+                    }
+                    
                     String req = requiredRole.trim().toUpperCase();
                     String csvR = csvRole.trim().toUpperCase();
-                    // Exact match or prefix match (e.g., WORKER1, WORKER_A should match WORKER)
-                    roleMatch = csvR.equals(req) || csvR.startsWith(req) || req.startsWith(csvR);
+                    // Exact match or prefix match
+                    boolean roleMatch = csvR.equals(req) || csvR.startsWith(req) || req.startsWith(csvR);
+                    
+                    if (!roleMatch) {
+                        System.out.println("[AuthService] Role mismatch. Required: " + requiredRole + ", Found: " + csvRole);
+                    }
+                    return roleMatch;
+                } else {
+                    System.out.println("[AuthService] Password mismatch for user: " + username);
                 }
-                System.out.println("[AuthService] Role check: CSV role=" + csvRole + ", required=" + requiredRole + ", match=" + roleMatch);
-                return roleMatch;
             }
-        }
-
-        // Fallback demo accounts
-        System.out.println("[AuthService] No match in CSV. Checking fallback demo accounts...");
-        if ("admin".equals(username) && "admin".equals(password)) {
-            System.out.println("[AuthService] Matched fallback admin account");
-            return requiredRole == null || "MANAGER".equalsIgnoreCase(requiredRole);
-        }
-        if ("user".equals(username) && "user".equals(password)) {
-            System.out.println("[AuthService] Matched fallback user account");
-            return requiredRole == null || "WORKER".equalsIgnoreCase(requiredRole);
         }
 
         System.err.println("[AuthService] Authentication failed for user: " + username);
