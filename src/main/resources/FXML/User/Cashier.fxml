@@ -5,7 +5,6 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
@@ -14,76 +13,96 @@
 <?import javafx.scene.text.Text?>
 
 <BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" 
-            fx:controller="bookshop.controllers.User.UserController"
+            fx:controller="bookshop.controllers.User.CashierController"
             stylesheets="@../../Styles/MainTheme.css"
             styleClass="app-background">
 
-    <!-- Top Bar -->
+    <!-- Top Header -->
     <top>
-        <HBox alignment="CENTER_LEFT" spacing="20" style="-fx-background-color: white; -fx-padding: 15 30; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 0, 0, 0, 2);">
-            <VBox>
-                <Text fx:id="greetingText" text="Good Morning" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-fill: #1a1a1a;"/>
-                <Text fx:id="userText" text="Cashier" style="-fx-font-size: 14px; -fx-fill: #888;"/>
-            </VBox>
-            
+        <HBox alignment="CENTER_LEFT" spacing="20" style="-fx-background-color: #1a1a1a; -fx-padding: 15 30;">
+            <Text text="Cashier Portal" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-fill: white;"/>
             <Region HBox.hgrow="ALWAYS"/>
-            
-            <HBox alignment="CENTER" spacing="20">
-                <Text fx:id="timeText" text="12:00" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-fill: #d4af37;"/>
-                <Text fx:id="dateText" text="01 Jan 2025" style="-fx-font-size: 14px; -fx-fill: #888;"/>
-            </HBox>
-            
-            <Region HBox.hgrow="ALWAYS"/>
-            
-            <Button fx:id="logoutButton" text="Logout" onAction="#handleLogout" styleClass="button-secondary"/>
+            <Text fx:id="dateTimeText" text="2025-01-01 12:00:00" style="-fx-font-size: 14px; -fx-fill: #d4af37; -fx-font-family: 'Monospaced';"/>
+            <Button fx:id="logoutBtn" text="Logout" onAction="#handleLogout" styleClass="button-secondary" style="-fx-text-fill: white; -fx-border-color: #666;"/>
         </HBox>
     </top>
 
     <!-- Main Content -->
     <center>
-        <VBox spacing="20" style="-fx-padding: 30;">
-            <!-- Search Bar -->
+        <VBox spacing="20" style="-fx-padding: 20;">
+            <!-- Search & Filter -->
             <HBox spacing="15" alignment="CENTER_LEFT">
-                <TextField fx:id="searchField" promptText="Search products..." prefWidth="400" style="-fx-font-size: 16px;"/>
-                <Button fx:id="searchButton" text="Search" onAction="#handleSearch"/>
-                <ToggleButton fx:id="itemToggle" text="Grid View" selected="true" visible="false" managed="false"/>
+                <TextField fx:id="searchField" promptText="Search products by name or ID..." prefWidth="400" style="-fx-font-size: 14px;"/>
+                <Button fx:id="searchBtn" text="Search" onAction="#handleSearch"/>
+                <Button fx:id="refreshBtn" text="Refresh Stock" onAction="#handleRefresh" styleClass="button-secondary"/>
             </HBox>
             
             <!-- Product Grid -->
-            <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent;" VBox.vgrow="ALWAYS">
+            <ScrollPane fitToWidth="true" fitToHeight="true" style="-fx-background-color: transparent; -fx-background: transparent;" VBox.vgrow="ALWAYS">
                 <content>
-                    <GridPane hgap="20" vgap="20" style="-fx-padding: 10;">
-                        <!-- Products will be added here dynamically by controller -->
+                    <GridPane fx:id="productsGrid" hgap="20" vgap="20" style="-fx-padding: 10;">
+                        <!-- Products will be added here dynamically -->
                     </GridPane>
                 </content>
             </ScrollPane>
         </VBox>
     </center>
 
-    <!-- Right Sidebar (Cart) -->
+    <!-- Right Sidebar (Customer & Cart) -->
     <right>
-        <VBox prefWidth="350" spacing="0" style="-fx-background-color: white; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), -5, 0, 0, 0);">
-            <VBox style="-fx-padding: 20; -fx-background-color: #1a1a1a;">
-                <Text text="Current Order" style="-fx-fill: white; -fx-font-size: 20px; -fx-font-weight: bold;"/>
+        <VBox prefWidth="400" spacing="0" style="-fx-background-color: white; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), -5, 0, 0, 0);">
+            
+            <!-- Customer Section -->
+            <VBox spacing="10" style="-fx-padding: 20; -fx-background-color: #f9f9f9; -fx-border-color: #eee; -fx-border-width: 0 0 1 0;">
+                <Label text="Customer Lookup" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+                <HBox spacing="10">
+                    <TextField fx:id="customerPhoneField" promptText="Phone Number" HBox.hgrow="ALWAYS"/>
+                    <Button fx:id="lookupCustomerBtn" text="Find" onAction="#handleCustomerLookup" style="-fx-padding: 8 15;"/>
+                </HBox>
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="Type:" style="-fx-text-fill: #666;"/>
+                    <Text fx:id="customerTypeField" text="Guest" style="-fx-font-weight: bold;"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Text fx:id="discountPercentText" text="" style="-fx-font-size: 11px;"/>
+                </HBox>
+            </VBox>
+
+            <!-- Cart Header -->
+            <VBox style="-fx-padding: 15 20; -fx-background-color: #1a1a1a;">
+                <HBox alignment="CENTER_LEFT">
+                    <Text text="Shopping Cart" style="-fx-fill: white; -fx-font-size: 16px; -fx-font-weight: bold;"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="Clear" onAction="#handleClearCart" style="-fx-background-color: transparent; -fx-text-fill: #ff6b6b; -fx-font-size: 12px; -fx-padding: 0; -fx-cursor: hand;"/>
+                </HBox>
             </VBox>
             
+            <!-- Cart Items -->
             <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent; -fx-background: transparent;">
                 <content>
-                    <VBox fx:id="cartItemsContainer" spacing="10" style="-fx-padding: 15;"/>
+                    <VBox fx:id="cartItemsBox" spacing="10" style="-fx-padding: 15;"/>
                 </content>
             </ScrollPane>
             
-            <VBox style="-fx-padding: 20; -fx-background-color: #f9f9f9; -fx-border-color: #eee; -fx-border-width: 1 0 0 0;">
-                <HBox alignment="CENTER_LEFT">
-                    <Text text="Total" style="-fx-font-size: 18px; -fx-fill: #666;"/>
+            <!-- Totals & Checkout -->
+            <VBox spacing="10" style="-fx-padding: 20; -fx-background-color: #f9f9f9; -fx-border-color: #eee; -fx-border-width: 1 0 0 0;">
+                <HBox>
+                    <Text text="Subtotal" style="-fx-fill: #666;"/>
                     <Region HBox.hgrow="ALWAYS"/>
-                    <Text fx:id="totalAmountText" text="Rs. 0.00" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-fill: #1a1a1a;"/>
+                    <Text fx:id="subtotalText" text="Rs. 0.00" style="-fx-font-weight: bold;"/>
+                </HBox>
+                <HBox>
+                    <Text text="Discount" style="-fx-fill: #666;"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Text fx:id="discountText" text="- Rs. 0.00" style="-fx-fill: #4CAF50; -fx-font-weight: bold;"/>
+                </HBox>
+                <Region prefHeight="5" style="-fx-border-color: #ddd; -fx-border-width: 0 0 1 0; -fx-border-style: dashed;"/>
+                <HBox alignment="CENTER_LEFT">
+                    <Text text="TOTAL" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Text fx:id="totalText" text="Rs. 0.00" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-fill: #1a1a1a;"/>
                 </HBox>
                 
-                <VBox spacing="10" style="-fx-padding: 20 0 0 0;">
-                    <Button fx:id="payButton" text="Pay Now" onAction="#handlePay" maxWidth="Infinity" style="-fx-font-size: 18px; -fx-padding: 15;"/>
-                    <Button fx:id="clearCartButton" text="Clear Cart" onAction="#handleClearCart" styleClass="button-secondary" maxWidth="Infinity"/>
-                </VBox>
+                <Button fx:id="payButton" text="PROCEED TO PAYMENT" onAction="#handleCheckout" maxWidth="Infinity" style="-fx-font-size: 16px; -fx-padding: 15; -fx-background-color: #d4af37; -fx-text-fill: #1a1a1a;"/>
             </VBox>
         </VBox>
     </right>
