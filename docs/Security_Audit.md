@@ -52,3 +52,27 @@
 2.  Create a utility to hash existing passwords in `users.csv`.
 3.  Update `AuthService` to use `BCrypt.checkpw`.
 4.  Remove hardcoded credentials.
+5.  **CSV Injection**:
+    -   **Issue**: User input (e.g., Customer Name) is written directly to CSV files without sanitization.
+    -   **Risk**: If a malicious user enters a name starting with `=`, `+`, `-`, or `@` (e.g., `=cmd|' /C calc'!A0`), it could execute malicious commands if the CSV file is opened in a spreadsheet program like Excel.
+
+6.  **Concurrency Issues (Race Conditions)**:
+    -   **Issue**: The application reads the entire CSV into memory and overwrites the file on save.
+    -   **Risk**: If multiple instances of the application are running (or multiple users access it simultaneously), one user's changes could overwrite another's. There is no file locking mechanism.
+
+7.  **Weak Input Validation**:
+    -   **Issue**: `CustomerService` does not strictly validate phone numbers or names (other than checking for empty IDs).
+    -   **Risk**: Malformed data could be stored, potentially causing issues in other parts of the system or during data export.
+
+## Additional Recommendations
+
+### 6. Prevent CSV Injection
+-   **Solution**: Sanitize inputs before writing to CSV.
+-   **Implementation**: Prepend a single quote `'` to any field starting with `=`, `+`, `-`, or `@`.
+
+### 7. Handle Concurrency
+-   **Solution**: Use file locks (`FileChannel.lock()`) when writing to files.
+-   **Better Solution**: Migrate to a database (as mentioned in point 5) which handles concurrency natively.
+
+### 8. Strengthen Input Validation
+-   **Solution**: Implement regex validation for phone numbers (e.g., `^\d{10}$`) and names in the Service layer before saving.
