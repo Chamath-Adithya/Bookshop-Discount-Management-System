@@ -28,7 +28,7 @@ This table provides a high-level overview of the development tasks in their logi
 
 ---
 
-## 👤 Team Member A: Core Models & Project Foundation
+## 👤 Team Member A: Chamath-Adithya (Core Models & Project Foundation)
 
 **Overall Task**: Build the foundational blocks of the application, including Maven configuration, core models, and utilities for file I/O and discount string parsing.
 
@@ -42,7 +42,7 @@ This table provides a high-level overview of the development tasks in their logi
 
 ---
 
-## 👤 Team Member B: Customer Hierarchy & Service
+## 👤 Team Member B: yasaruhashen (Customer Hierarchy & Service)
 
 **Overall Task**: Implement the customer logic. The `CustomerService` implementation remains largely unchanged.
 
@@ -55,7 +55,7 @@ This table provides a high-level overview of the development tasks in their logi
 
 ---
 
-## 👤 Team Member C: User Roles & Data Management Services
+## 👤 Team Member C: prabandisathsarani080-ai (User Roles & Data Management Services)
 
 **Overall Task**: Define user roles and create services to manage product data, now with more complex logic.
 
@@ -68,7 +68,7 @@ This table provides a high-level overview of the development tasks in their logi
 
 ---
 
-## 👤 Team Member D: Main Application & Billing Logic
+## 👤 Team Member D: IOICybErIOI (Main Application & Billing Logic)
 
 **Overall Task**: Develop the main application entry point and UI. The core logic remains the same as it depends on the services, not the data source itself.
 
@@ -80,7 +80,7 @@ This table provides a high-level overview of the development tasks in their logi
 
 ---
 
-## 👤 Team Member E: Validation, Exceptions & Testing
+## 👤 Team Member E: kaveesha-tharindi5 (Validation, Exceptions & Testing)
 
 **Overall Task**: Ensure application robustness. Test cases for `BillingService` remain valid.
 

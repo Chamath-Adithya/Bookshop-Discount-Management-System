@@ -139,7 +139,7 @@ BookshopDiscountSystem/
 ### Steps to Run
 1.  **Clone the Repository**:
     ```bash
-    git clone https://github.com/yourusername/BookshopDiscountSystem.git
+    git clone https://github.com/Chamath-Adithya/Bookshop-Discount-Management-System.git
     cd BookshopDiscountSystem
     ```
 
@@ -180,7 +180,11 @@ BookshopDiscountSystem/
 ---
 
 ## 👨‍💻 Contributors
-*   **Chamath Adithya** - *Lead Developer & Architect*
+*   **Chamath-Adithya** - *Lead Developer, Core Models & Project Foundation*
+*   **yasaruhashen** - *Customer Hierarchy & Service*
+*   **prabandisathsarani080-ai** - *User Roles & Data Management Services*
+*   **IOICybErIOI** - *Main Application & Billing Logic*
+*   **kaveesha-tharindi5** - *Validation, Exceptions & Testing*
 
 ---
 *This project was developed for the University Object-Oriented Programming Module.*
