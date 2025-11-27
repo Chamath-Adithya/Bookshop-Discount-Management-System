@@ -66,19 +66,29 @@ public class CustomerService {
         lines.add("customer_id,customer_name,customer_type,phone");
         for (Customer c : customers) {
             String phone = c.getPhone() == null ? "" : c.getPhone();
-            String line = String.format("%s,%s,%s,%s", c.getCustomerId(), c.getName(), c.getType(), phone);
+            String line = String.format("%s,%s,%s,%s", 
+                c.getCustomerId(), 
+                FileHandler.escapeCsvField(c.getName()), 
+                c.getType(), 
+                FileHandler.escapeCsvField(phone));
             lines.add(line);
         }
         FileHandler.writeCsv(CUSTOMERS_FILE_PATH, lines);
     }
 
     public void addCustomer(Customer customer) throws IOException {
+        validateCustomer(customer);
+        
         if (customer.getCustomerId() == null || customer.getCustomerId().trim().isEmpty()) {
             customer.setCustomerId(generateNextCustomerId());
         }
         // append to file and add to memory
         String phone = customer.getPhone() == null ? "" : customer.getPhone();
-        String line = String.format("%s,%s,%s,%s", customer.getCustomerId(), customer.getName(), customer.getType(), phone);
+        String line = String.format("%s,%s,%s,%s", 
+            customer.getCustomerId(), 
+            FileHandler.escapeCsvField(customer.getName()), 
+            customer.getType(), 
+            FileHandler.escapeCsvField(phone));
         FileHandler.appendLine(CUSTOMERS_FILE_PATH, line);
         this.customers.add(customer);
     }
@@ -110,6 +120,8 @@ public class CustomerService {
     }
 
     public void updateCustomer(Customer customer) throws IOException {
+        validateCustomer(customer);
+        
         Customer existing = findCustomerById(customer.getCustomerId());
         if (existing != null) {
             // Name and phone can be updated directly
@@ -139,5 +151,16 @@ public class CustomerService {
     public void deleteCustomer(String customerId) throws IOException {
         customers.removeIf(c -> c.getCustomerId().equals(customerId));
         saveAllCustomers();
+    }
+
+    private void validateCustomer(Customer customer) {
+        if (customer.getName() == null || customer.getName().trim().isEmpty()) {
+            throw new IllegalArgumentException("Customer name cannot be empty.");
+        }
+        if (customer.getPhone() != null && !customer.getPhone().trim().isEmpty()) {
+            if (!customer.getPhone().matches("^\\d{10}$")) {
+                throw new IllegalArgumentException("Phone number must be exactly 10 digits.");
+            }
+        }
     }
 }

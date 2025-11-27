@@ -1,6 +1,9 @@
 package bookshop.util;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -34,7 +37,10 @@ public final class FileHandler {
         if (p.getParent() != null && !Files.exists(p.getParent())) {
             Files.createDirectories(p.getParent());
         }
-        Files.write(p, (line + System.lineSeparator()).getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+        try (FileChannel channel = FileChannel.open(p, StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.APPEND);
+             FileLock lock = channel.lock()) {
+            channel.write(ByteBuffer.wrap((line + System.lineSeparator()).getBytes(StandardCharsets.UTF_8)));
+        }
     }
 
     public static void writeCsv(String filePath, List<String> lines) throws IOException {
@@ -42,7 +48,27 @@ public final class FileHandler {
         if (p.getParent() != null && !Files.exists(p.getParent())) {
             Files.createDirectories(p.getParent());
         }
-        Files.write(p, lines, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+        try (FileChannel channel = FileChannel.open(p, StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+             FileLock lock = channel.lock()) {
+            for (String line : lines) {
+                channel.write(ByteBuffer.wrap((line + System.lineSeparator()).getBytes(StandardCharsets.UTF_8)));
+            }
+        }
+    }
+
+    /**
+     * Sanitizes a CSV field to prevent CSV injection.
+     * Prepends a single quote if the field starts with =, +, -, or @.
+     * @param field The field to sanitize.
+     * @return The sanitized field.
+     */
+    public static String escapeCsvField(String field) {
+        if (field == null) return "";
+        // Prevent CSV Injection
+        if (field.startsWith("=") || field.startsWith("+") || field.startsWith("-") || field.startsWith("@")) {
+            return "'" + field;
+        }
+        return field;
     }
 
     public static Map<Integer, Double> parseDiscountString(String discounts) {
