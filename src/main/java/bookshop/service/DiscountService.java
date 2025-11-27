@@ -12,6 +12,13 @@ public class DiscountService {
      * This is a complex read-modify-overwrite operation.
      */
     public void addDiscount(Product product, int quantity, double price) throws IOException {
-        // TODO: Implement this method based on PLAN.md
+        // Load products, find the product and update its discount rules, then save all products
+        ProductService ps = new ProductService();
+        Product existing = ps.findProductById(product.getProductId());
+        if (existing == null) {
+            throw new IOException("Product not found: " + product.getProductId());
+        }
+        existing.setDiscount(quantity, price);
+        ps.saveAllProducts();
     }
 }

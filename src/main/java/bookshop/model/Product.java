@@ -9,6 +9,7 @@ public class Product {
     private String name;
     private double realPrice;
     private Map<Integer, Double> discountRules;
+    private int quantity; // stock/quantity available
 
     // Constructor
     public Product(String productId, String name, double realPrice) {
@@ -16,6 +17,7 @@ public class Product {
         this.name = name;
         this.realPrice = realPrice;
         this.discountRules = new HashMap<>();
+        this.quantity = 0;
     }
 
     // Constructor with discount rules
@@ -24,6 +26,16 @@ public class Product {
         this.name = name;
         this.realPrice = realPrice;
         this.discountRules = new HashMap<>(discountRules);
+        this.quantity = 0;
+    }
+
+    // Constructor with quantity
+    public Product(String productId, String name, double realPrice, Map<Integer, Double> discountRules, int quantity) {
+        this.productId = productId;
+        this.name = name;
+        this.realPrice = realPrice;
+        this.discountRules = new HashMap<>(discountRules);
+        this.quantity = quantity;
     }
 
     // Getters
@@ -41,6 +53,14 @@ public class Product {
 
     public Map<Integer, Double> getDiscountRules() {
         return new HashMap<>(discountRules);
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 
     // Setters

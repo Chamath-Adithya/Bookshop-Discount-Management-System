@@ -6,6 +6,7 @@ public abstract class Customer {
     protected String name;
     protected String type;
     protected double baseDiscountRate;
+    protected String phone = "";
 
     // Constructor
     public Customer(String customerId, String name, String type,double baseDiscountRate) {
@@ -13,6 +14,15 @@ public abstract class Customer {
         this.name = name;
         this.type = type;
         this.baseDiscountRate = baseDiscountRate;
+    }
+
+    // Phone getter/setter (optional field)
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     // Getters

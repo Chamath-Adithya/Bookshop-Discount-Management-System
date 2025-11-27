@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.text.Text?>
+
+<StackPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" 
+           fx:controller="bookshop.controllers.CashierLoginController"
+           stylesheets="@../Styles/MainTheme.css"
+           style="-fx-background-color: -fx-primary-color;">
+
+    <VBox alignment="CENTER" spacing="25.0" maxWidth="400" styleClass="card">
+        <padding>
+            <Insets top="40" right="40" bottom="40" left="40"/>
+        </padding>
+
+        <VBox alignment="CENTER" spacing="5">
+            <Text text="Cashier Login" styleClass="header-text"/>
+            <Text text="Enter your credentials" styleClass="subheader-text"/>
+        </VBox>
+
+        <VBox spacing="15.0" maxWidth="300">
+            <VBox spacing="5">
+                <Label text="Username"/>
+                <TextField fx:id="username_fld" promptText="Enter username"/>
+            </VBox>
+            
+            <VBox spacing="5">
+                <Label text="Password"/>
+                <PasswordField fx:id="password_fld" promptText="Enter password"/>
+            </VBox>
+        </VBox>
+
+        <Label fx:id="error_lbl" text="" style="-fx-text-fill: red;" wrapText="true"/>
+
+        <VBox spacing="10.0" alignment="CENTER" maxWidth="300">
+            <Button text="Login" onAction="#handleLogin" prefWidth="250" prefHeight="40"/>
+            <Button text="Back" onAction="#handleBack" styleClass="button-secondary" prefWidth="250" prefHeight="40"/>
+        </VBox>
+    </VBox>
+</StackPane>
