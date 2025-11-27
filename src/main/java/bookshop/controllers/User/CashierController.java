@@ -3,6 +3,7 @@ package bookshop.controllers.User;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
+import javafx.geometry.Side;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -59,6 +60,8 @@ public class CashierController {
     private Thread fileWatchThread;
     private long productsLastModified = 0L;
 
+    private ContextMenu suggestionsMenu;
+
     @FXML
     public void initialize() {
         System.out.println("[CashierController] Initializing...");
@@ -67,6 +70,7 @@ public class CashierController {
         setupFileWatcher();
         setupEventHandlers();
         setupCustomerService();
+        setupCustomerSearch();
         updateCartDisplay();
     }
 
@@ -78,61 +82,81 @@ public class CashierController {
         }
     }
 
-    @FXML
-    private void handleCustomerLookup() {
-        String input = customerPhoneField.getText().trim();
-        if (input.isEmpty()) {
-            showWarning("Please enter a phone number or name!");
+    private void setupCustomerSearch() {
+        suggestionsMenu = new ContextMenu();
+        customerPhoneField.textProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal == null || newVal.trim().isEmpty()) {
+                suggestionsMenu.hide();
+                return;
+            }
+            
+            // Don't show suggestions if the text matches the current customer (avoid popup after selection)
+            if (currentCustomer != null && 
+               (newVal.equals(currentCustomer.getName()) || newVal.equals(currentCustomer.getPhone()))) {
+                return;
+            }
+
+            handleSearchInput(newVal.trim());
+        });
+        
+        // Hide menu when field loses focus
+        customerPhoneField.focusedProperty().addListener((obs, oldVal, newVal) -> {
+            if (!newVal) {
+                suggestionsMenu.hide();
+            }
+        });
+    }
+
+    private void handleSearchInput(String input) {
+        if (customerService == null) return;
+        
+        List<Customer> matches = new ArrayList<>();
+        String lowerInput = input.toLowerCase();
+        
+        for (Customer c : customerService.getAllCustomers()) {
+            boolean nameMatch = c.getName().toLowerCase().contains(lowerInput);
+            boolean phoneMatch = c.getPhone() != null && c.getPhone().contains(input);
+            
+            if (nameMatch || phoneMatch) {
+                matches.add(c);
+                if (matches.size() >= 10) break; // Limit results
+            }
+        }
+        
+        if (matches.isEmpty()) {
+            suggestionsMenu.hide();
             return;
         }
         
-        if (customerService == null) {
-            try {
-                customerService = new CustomerService();
-            } catch (IOException e) {
-                showError("Failed to load customer data: " + e.getMessage());
-                return;
-            }
+        suggestionsMenu.getItems().clear();
+        for (Customer c : matches) {
+            String label = c.getName() + " (" + (c.getPhone() != null ? c.getPhone() : "No Phone") + ") - " + c.getType();
+            MenuItem item = new MenuItem(label);
+            item.setOnAction(e -> selectCustomer(c));
+            suggestionsMenu.getItems().add(item);
         }
         
-        // Search for customer by phone or name
-        Customer found = null;
-        for (Customer c : customerService.getAllCustomers()) {
-            // Check phone match
-            if (c.getPhone() != null && c.getPhone().equals(input)) {
-                found = c;
-                break;
-            }
-            // Check name match (case-insensitive)
-            if (c.getName().equalsIgnoreCase(input)) {
-                found = c;
-                break;
-            }
+        if (!suggestionsMenu.isShowing()) {
+            suggestionsMenu.show(customerPhoneField, Side.BOTTOM, 0, 0);
         }
+    }
+
+    private void selectCustomer(Customer c) {
+        currentCustomer = c;
+        customerPhoneField.setText(c.getName());
+        customerTypeField.setText(c.getType());
         
-        if (found != null) {
-            currentCustomer = found;
-            customerTypeField.setText(found.getType());
-            
-            // Show discount info
-            if ("VIP".equalsIgnoreCase(found.getType())) {
-                discountPercentText.setText("VIP: 5% OFF");
-                discountPercentText.setStyle("-fx-font-size: 12; -fx-fill: green; -fx-font-weight: bold;");
-            } else {
-                discountPercentText.setText("Regular");
-                discountPercentText.setStyle("-fx-font-size: 12; -fx-fill: #666;");
-            }
-            showInfo("Customer found: " + found.getName());
+        if ("VIP".equalsIgnoreCase(c.getType())) {
+            discountPercentText.setText("VIP: 5% OFF");
+            discountPercentText.setStyle("-fx-font-size: 12; -fx-fill: green; -fx-font-weight: bold;");
         } else {
-            currentCustomer = null;
-            customerTypeField.setText("Guest");
-            discountPercentText.setText("No account found");
-            discountPercentText.setStyle("-fx-font-size: 12; -fx-fill: #999;");
-            showWarning("Customer not found. Proceeding as Guest.");
+            discountPercentText.setText("Regular");
+            discountPercentText.setStyle("-fx-font-size: 12; -fx-fill: #666;");
         }
         
-        // Recalculate cart totals as customer type might have changed
+        suggestionsMenu.hide();
         updateCartDisplay();
+        showInfo("Customer selected: " + c.getName());
     }
 
     private void setupDateTime() {

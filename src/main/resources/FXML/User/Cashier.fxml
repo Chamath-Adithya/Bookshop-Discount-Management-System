@@ -56,8 +56,7 @@
             <VBox spacing="10" style="-fx-padding: 20; -fx-background-color: #f9f9f9; -fx-border-color: #eee; -fx-border-width: 0 0 1 0;">
                 <Label text="Customer Lookup" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
                 <HBox spacing="10">
-                    <TextField fx:id="customerPhoneField" promptText="Enter Phone or Name" styleClass="text-field"/>
-                    <Button fx:id="lookupCustomerBtn" text="Find" onAction="#handleCustomerLookup" style="-fx-padding: 8 15;"/>
+                    <TextField fx:id="customerPhoneField" promptText="Enter Phone or Name to Search..." styleClass="text-field" HBox.hgrow="ALWAYS"/>
                 </HBox>
                 <HBox spacing="10" alignment="CENTER_LEFT">
                     <Label text="Type:" style="-fx-text-fill: #666;"/>
