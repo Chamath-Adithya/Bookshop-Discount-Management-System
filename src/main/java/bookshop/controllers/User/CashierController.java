@@ -599,8 +599,8 @@ public class CashierController {
             double discount = 0;
             
             // Customer tier discount (VIP gets 5%)
-            if (customer != null && "VIP".equalsIgnoreCase(customer.getType())) {
-                discount += getSubtotal() * 0.05;
+            if (customer != null) {
+                discount += getSubtotal() * customer.getBaseDiscountRate();
             }
             
             // Product bulk discount based on quantity
