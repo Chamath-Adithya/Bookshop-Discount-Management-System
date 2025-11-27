@@ -430,10 +430,33 @@ public class CashierController {
         
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
-            generateBill();
-            cartItems.clear();
-            updateCartDisplay();
-            showInfo("Payment successful!");
+            // Deduct stock
+            try {
+                if (productService == null) {
+                    productService = new ProductService();
+                }
+                
+                for (CartItem item : cartItems.values()) {
+                    Product p = item.product;
+                    int newQty = p.getQuantity() - item.quantity;
+                    if (newQty < 0) {
+                        showError("Insufficient stock for " + p.getName() + ". Transaction cancelled.");
+                        return; // Cancel transaction
+                    }
+                    p.setQuantity(newQty);
+                    productService.updateProduct(p);
+                }
+                productService.saveAllProducts();
+                
+                generateBill();
+                cartItems.clear();
+                updateCartDisplay();
+                showInfo("Payment successful! Stock updated.");
+                
+            } catch (IOException e) {
+                showError("Failed to update stock: " + e.getMessage());
+                e.printStackTrace();
+            }
         }
     }
 
