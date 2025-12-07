@@ -7,6 +7,11 @@
 */
 
 .root {
+    -fx-primary-color: #1a1a1a;
+    -fx-secondary-color: #d4af37;
+    -fx-accent-color: #ffffff;
+    -fx-background-base: #f4f4f4;
+
     -fx-text-fill: #333333;
     -fx-font-family: 'Segoe UI', sans-serif;
 }
