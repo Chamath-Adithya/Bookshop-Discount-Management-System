@@ -188,3 +188,11 @@ BookshopDiscountSystem/
 
 ---
 *This project was developed for the Object-Oriented Programming Module at the University of Sri Jayewardenepura.*
+### Executable Files
+
+Pre-built executable files are available:
+
+* **Linux**: BookshopDiscountSystem-linux.sh
+* **Windows**: BookshopDiscountSystem-windows.bat
+
+Ensure Java 11+ installed before use.
