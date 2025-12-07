@@ -12,6 +12,7 @@ import bookshop.service.CustomerService;
 import bookshop.service.DiscountService;
 import bookshop.service.ProductService;
 import bookshop.util.FileHandler;
+import org.mindrot.jbcrypt.BCrypt;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -235,7 +236,7 @@ public class AdminController {
         loadUsersData();
         
         // Initialize role and customer type combo boxes
-        userRoleField.setItems(FXCollections.observableArrayList("MANAGER", "CASHIER", "ADMIN"));
+        userRoleField.setItems(FXCollections.observableArrayList("MANAGER", "CASHIER"));
         customerTypeField.setItems(FXCollections.observableArrayList("REGULAR", "VIP"));
     }
 
@@ -394,7 +395,9 @@ public class AdminController {
                     if (t.isEmpty() || t.startsWith("#")) { out.add(line); continue; }
                     String[] cols = line.split(",");
                     if (cols.length >= 1 && cols[0].trim().equals(editingUserId)) {
-                        out.add(String.format("%s,%s,%s,%s", editingUserId, username, password, role));
+                        // Hash the password before saving
+                        String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+                        out.add(String.format("%s,%s,%s,%s", editingUserId, username, hashedPassword, role));
                     } else {
                         out.add(line);
                     }
@@ -407,7 +410,9 @@ public class AdminController {
             } else {
                 // Generate new user ID
                 String newUserId = generateNextUserId();
-                String line = String.format("%s,%s,%s,%s", newUserId, username, password, role);
+                // Hash the password before saving
+                String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+                String line = String.format("%s,%s,%s,%s", newUserId, username, hashedPassword, role);
                 FileHandler.appendLine("data/users.csv", line);
                 showInfo("User added successfully! ID: " + newUserId);
             }
