@@ -125,6 +125,8 @@ BookshopDiscountSystem/
 │   └── Styles/           # CSS Styling
 ├── data/                 # CSV Data Storage
 ├── docs/                 # Documentation & Security Audit
+├── BookshopDiscountSystem-linux.sh    # Linux executable script
+├── BookshopDiscountSystem-windows.bat  # Windows executable batch file
 └── pom.xml               # Maven Dependencies
 ```
 
