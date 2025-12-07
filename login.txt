@@ -1,2 +1,2 @@
-manager - admin - Admin@123
-cashior - yasaru - Yasaru@123
+MANAGER - admin - Admin@123
+CASHIER - yasaru - Yasaru@123
