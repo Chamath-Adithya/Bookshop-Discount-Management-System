@@ -1,3 +1,4 @@
 # user_id,username,password,role
 u05,admin,$2a$10$eD2BSlnju1qg9IMBTuMqLOXEGYNbfnGhyaZpmdjKw3lqMJojIBG3K,MANAGER
-u06,yasaru,$2a$10$DEzHgohBO3hxwGrNUfZRie87nnErjLiloZ23Nyi1XrzJZ17AfrRgi,CASHIER
+u06,yasaru,$2a$10$pMV5Vj7DW.sxEiQo5AB.0OtlGvsGyHZptEtGdmbWHF9PEWT42rSxi,CASHIER
+u07,a,$2a$10$x4VsdwgivFgqkwmvHOg/VeSJvBVjKiGQNg1nUl.YzJe17AV4d6R8W,CASHIER

@@ -42,7 +42,7 @@ public class CashierLoginController {
             String trimmedUsername = username.trim();
             System.out.println("[CashierLoginController] Authenticating user: '" + trimmedUsername + "' for role WORKER");
             
-            boolean ok = auth.authenticate(trimmedUsername, password, "WORKER");
+            boolean ok = auth.authenticate(trimmedUsername, password, "CASHIER");
             if (!ok) {
                 error_lbl.setText("Invalid cashier credentials. Please try again.");
                 System.err.println("[CashierLoginController] Authentication failed for user: " + trimmedUsername);

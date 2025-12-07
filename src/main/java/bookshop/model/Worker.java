@@ -2,7 +2,7 @@ package bookshop.model;
 
 // Team Member C: Implement the Worker class, inheriting from User.
 public class Worker extends User {
-    public static final String ROLE = "WORKER";
+    public static final String ROLE = "CASHIER";
 
     // Constructor
     public Worker(String username, String password) {
