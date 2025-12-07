@@ -126,7 +126,7 @@ BookshopDiscountSystem/
 ├── data/                 # CSV Data Storage
 ├── docs/                 # Documentation & Security Audit
 ├── BookshopDiscountSystem-linux.sh    # Linux executable script
-├── BookshopDiscountSystem-windows.bat  # Windows executable batch file
+
 └── pom.xml               # Maven Dependencies
 ```
 
@@ -192,9 +192,14 @@ BookshopDiscountSystem/
 *This project was developed for the Object-Oriented Programming Module at the University of Sri Jayewardenepura.*
 ### Executable Files
 
-Pre-built executable files are available:
+* **Linux**: Run `./BookshopDiscountSystem-linux.sh`
+* **Windows**: Run `target/BookshopDiscountSystem.exe`
 
-* **Linux**: `BookshopDiscountSystem-linux.sh`
-* **Windows**: `target/BookshopDiscountSystem.exe`
+### Generating Windows Executable
+To generate the `.exe` file for Windows, run the following command:
 
-Ensure Java 11+ installed before use.
+```bash
+MAVEN_OPTS="--add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang.reflect=ALL-UNNAMED --add-opens java.base/java.text=ALL-UNNAMED --add-opens java.desktop/java.awt.font=ALL-UNNAMED" mvn clean package
+```
+
+Ensure Java 11+ is installed.
