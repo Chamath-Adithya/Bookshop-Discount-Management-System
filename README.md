@@ -194,7 +194,7 @@ BookshopDiscountSystem/
 
 Pre-built executable files are available:
 
-* **Linux**: BookshopDiscountSystem-linux.sh
-* **Windows**: BookshopDiscountSystem-windows.bat
+* **Linux**: `BookshopDiscountSystem-linux.sh`
+* **Windows**: `target/BookshopDiscountSystem.exe`
 
 Ensure Java 11+ installed before use.
